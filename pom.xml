@@ -3,7 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <!-- Project from https://start.vaadin.com/ -->
-    <groupId>com.example.application</groupId>
+    <groupId>pl.kskowronski</groupId>
     <artifactId>ven-zam-mapi</artifactId>
     <name>ven-zam-mapi</name>
     <version>1.0-SNAPSHOT</version>
@@ -149,6 +149,23 @@
             <version>5.0.3</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- added k.skowronski -->
+        <!-- https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc10 -->
+        <dependency>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
+            <version>19.7.0.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.oracle.ojdbc/orai18n -->
+        <dependency>
+            <groupId>com.oracle.ojdbc</groupId>
+            <artifactId>orai18n</artifactId>
+            <version>19.3.0.0</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>

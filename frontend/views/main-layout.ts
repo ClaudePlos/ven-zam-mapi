@@ -53,7 +53,6 @@ export class MainLayout extends Layout {
               ? html` <vaadin-context-menu open-on="click" .renderer="${this.renderLogoutOptions}">
                   <vaadin-avatar
                     theme="xsmall"
-                    img="${appStore.user.profilePictureUrl}"
                     name="${appStore.user.name}"
                   ></vaadin-avatar>
                   <span class="font-medium ms-xs text-s text-secondary">${appStore.user.name}</span>
