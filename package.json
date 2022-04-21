@@ -252,7 +252,8 @@
     "line-awesome": "$line-awesome",
     "mobx": "$mobx",
     "@hilla/form": "$@hilla/form",
-    "@hilla/frontend": "$@hilla/frontend"
+    "@hilla/frontend": "$@hilla/frontend",
+    "date-fns": "$date-fns"
   },
   "vaadin": {
     "dependencies": {
@@ -383,6 +384,6 @@
       "workbox-core": "6.5.0",
       "workbox-precaching": "6.5.0"
     },
-    "hash": "756e1b86cbf92c749c8c18b3bf0b989bc59b30128f9a6ec352a2822606dbaed4"
+    "hash": "4401b12afee9e97ffce13bfbba29eba40168e725265ed90be2186f56d42f443d"
   }
 }

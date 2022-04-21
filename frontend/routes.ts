@@ -45,7 +45,7 @@ export const views: ViewRoute[] = [
     component: 'feed-view',
     requiresLogin: true,
     icon: 'la la-globe',
-    title: 'Feed',
+    title: 'Stan żywionych na dzień',
     action: async (_context, _command) => {
       if (!hasAccess(_context.route)) {
         return _command.redirect('login');

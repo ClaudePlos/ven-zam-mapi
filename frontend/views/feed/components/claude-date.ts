@@ -8,8 +8,8 @@ import dateFnsParse from 'date-fns/parse';
 import { feedViewStore } from '../feed-view-store';
 
 
-@customElement('claude-date-to')
-export class ClaudeDateTo extends LitElement {
+@customElement('claude-date')
+export class ClaudeDate extends LitElement {
     protected createRenderRoot() {
         const root = super.createRenderRoot();
         // Apply custom theme (only supported if your app uses one)
@@ -50,7 +50,7 @@ export class ClaudeDateTo extends LitElement {
     render() {
         return html`
       <vaadin-date-picker
-        label="Okres do:"
+        label="Na dzień:"
         value="${feedViewStore.startDate}"
         @value-changed="${this.dateChanged}"
       ></vaadin-date-picker>
@@ -62,4 +62,4 @@ export class ClaudeDateTo extends LitElement {
     }
 }
 
-export default ClaudeDateTo;
+export default ClaudeDate;
