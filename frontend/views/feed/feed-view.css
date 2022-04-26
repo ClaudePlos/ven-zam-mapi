@@ -1,0 +1,16 @@
+vaadin-grid-cell-content {
+    text-align: center;
+}
+
+
+vaadin-grid-column-group {
+    color: red;
+}
+
+.korekta {
+    color: red;
+}
+
+.plan {
+    color: blue;
+}
