@@ -14,3 +14,32 @@ vaadin-grid-column-group {
 .plan {
     color: blue;
 }
+
+/* works!*/
+vaadin-grid-cell-content .field-2s {
+    color: red;
+}
+
+:host([part="increase-button"][part$='button'] ) {
+    color: red;
+}
+
+[part$='button']::before {
+    font-family: 'lumo-icons';
+    display: block;
+    color: red;
+}
+
+:host([has-controls]) [part='input-field'] {
+    padding: 0;
+    color: red;
+}
+
+vaadin-integer-field {
+    color: blue;
+    padding: 0;
+}
+
+vaadin-input-container {
+    color: pink;
+}

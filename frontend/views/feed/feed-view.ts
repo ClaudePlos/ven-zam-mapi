@@ -79,8 +79,8 @@ export class FeedView extends View {
   
                 
                 <vaadin-grid-column-group header="Planowanie">
-                <vaadin-grid-column header="Ś" path="sniadaniePlanIl" .renderer="${this.valueRenderer}"></vaadin-grid-column>
-                <vaadin-grid-column path="drugieSniadaniePlanIl"></vaadin-grid-column>
+                <vaadin-grid-column header="Ś" path="sniadaniePlanIl" .renderer="${this.valueRendererS}" width="130px"></vaadin-grid-column>
+                <vaadin-grid-column header="IIŚ" path="drugieSniadaniePlanIl" .renderer="${this.valueRendererIIS}" width="130px"></vaadin-grid-column>
                 <vaadin-grid-column path="obiadPlanIl"></vaadin-grid-column>
                 <vaadin-grid-column path="podwieczorekPlanIl"></vaadin-grid-column>
                 <vaadin-grid-column path="kolacjaPlanIl"></vaadin-grid-column>
@@ -101,19 +101,36 @@ export class FeedView extends View {
     </div>`;
     }
 
-    private valueRenderer = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        render(html` <vaadin-integer-field has-controls @value-changed=${(e: CustomEvent) => this.updateTodoState(model.item, e.detail.value)}
-                                           value="${model.item.sniadaniePlanIl}"></vaadin-integer-field>`, root);
+    private valueRendererS = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
+        render(html` <vaadin-integer-field has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "s")}
+                                           value="${model.item.sniadaniePlanIl as number}" style="width: 110px"></vaadin-integer-field>`, root);
+    };
+
+    private valueRendererIIS = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
+        render(html` <vaadin-integer-field class="field-2s"
+                                        has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "2s")}
+                                           value="${model.item.drugieSniadaniePlanIl as number}" style="width: 110px"></vaadin-integer-field>`, root);
     };
 
     // private valueRenderer = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
     //     render(html` <input type="number" id="fname" name="fname" value="${model.item.sniadaniePlanIl}"
-    //                         onchange="${model.item.sniadaniePlanIl} == this.value"
+    //                         onChange="${this.handleChange}"
     //             style="border: none;width: 50px;font-size: 16px"></input>`, root);
     // };
 
-    updateTodoState( item: StanZywionychNaDzienDTO, value: number){
-        item.sniadaniePlanIl = value;
+    updateState( item: StanZywionychNaDzienDTO, value: number, type: string ){
+        if (type === "s")
+            item.sniadaniePlanIl = value as number;
+        else if (type === "2s")
+            item.drugieSniadaniePlanIl = value as number;
+    }
+
+    handleChange = (event: CustomEvent<{ value: string }>) => {
+        Notification.show("zmienione" + event);
+    }
+
+    updateTodoState2( e: number){
+        Notification.show("zmienione" + e);
     }
 
     inputChange(e: CustomEvent) {
