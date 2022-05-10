@@ -16,7 +16,11 @@ vaadin-grid-column-group {
 }
 
 /* works!*/
-vaadin-grid-cell-content .field-2s {
+vaadin-grid-cell-content .field-plan {
+    color: blue;
+}
+
+vaadin-grid-cell-content .field-kor {
     color: red;
 }
 

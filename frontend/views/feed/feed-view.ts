@@ -79,9 +79,9 @@ export class FeedView extends View {
   
                 
                 <vaadin-grid-column-group header="Planowanie">
-                <vaadin-grid-column header="Ś" path="sniadaniePlanIl" .renderer="${this.valueRendererS}" width="130px"></vaadin-grid-column>
-                <vaadin-grid-column header="IIŚ" path="drugieSniadaniePlanIl" .renderer="${this.valueRendererIIS}" width="130px"></vaadin-grid-column>
-                <vaadin-grid-column path="obiadPlanIl"></vaadin-grid-column>
+                <vaadin-grid-column header="Ś"   .renderer="${this.valueRendererS}" width="145px"></vaadin-grid-column>
+                <vaadin-grid-column header="IIŚ" .renderer="${this.valueRendererIIS}" width="145px"></vaadin-grid-column>
+                <vaadin-grid-column header="O"   .renderer="${this.valueRendererO}" width="145px"></vaadin-grid-column>
                 <vaadin-grid-column path="podwieczorekPlanIl"></vaadin-grid-column>
                 <vaadin-grid-column path="kolacjaPlanIl"></vaadin-grid-column>
                 <vaadin-grid-column path="posilekNocnyPlanIl"></vaadin-grid-column>
@@ -102,15 +102,22 @@ export class FeedView extends View {
     }
 
     private valueRendererS = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        render(html` <vaadin-integer-field has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "s")}
-                                           value="${model.item.sniadaniePlanIl as number}" style="width: 110px"></vaadin-integer-field>`, root);
-    };
+        model.item.sniadaniePlanIl !== undefined ? render(html` <vaadin-integer-field class="firld-plan"
+            has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "s")}
+               value="${model.item.sniadaniePlanIl as number}" style="width: 110px"></vaadin-integer-field>`, root) : render(html``,root);
+    }
 
     private valueRendererIIS = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        render(html` <vaadin-integer-field class="field-2s"
-                                        has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "2s")}
-                                           value="${model.item.drugieSniadaniePlanIl as number}" style="width: 110px"></vaadin-integer-field>`, root);
-    };
+        model.item.drugieSniadaniePlanIl !== undefined ? render(html` <vaadin-integer-field class="field-kor"
+            has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "2s")}
+               value="${model.item.drugieSniadaniePlanIl as number}" style="width: 110px"></vaadin-integer-field>`, root) : render(html``,root);
+    }
+
+    private valueRendererO = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
+        model.item.obiadPlanIl !== undefined ? render(html` <vaadin-integer-field class="field-plan"
+            has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "o")}
+               value="${model.item.obiadPlanIl as number}" style="width: 110px"></vaadin-integer-field>`, root) : render(html``,root);
+    }
 
     // private valueRenderer = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
     //     render(html` <input type="number" id="fname" name="fname" value="${model.item.sniadaniePlanIl}"
