@@ -30,6 +30,7 @@ export class FeedView extends View {
     idKK: number = 0;
     idGZ: number = 0;
     sortType: string = "lp";
+    czyKorekta: string = "N";
 
     @state()
     private kkList: KierunekKosztowVO[] = [];
@@ -126,10 +127,14 @@ export class FeedView extends View {
     // };
 
     updateState( item: StanZywionychNaDzienDTO, value: number, type: string ){
-        if (type === "s")
+        if (type === "s") {
             item.sniadaniePlanIl = value as number;
-        else if (type === "2s")
+            item.dataChanged = true;
+        }
+        else if (type === "2s") {
             item.drugieSniadaniePlanIl = value as number;
+            item.dataChanged = true;
+        }
     }
 
     handleChange = (event: CustomEvent<{ value: string }>) => {
@@ -165,7 +170,8 @@ export class FeedView extends View {
     }
 
     async save() {
-        Notification.show("Zapisane");
+        const ret = await StanyZywionychEndpoint.zapiszStanZyw(feedViewStore.startDate, this.idGZ, this.sortType, this.idKK, this.czyKorekta, 3,  this.stanyZywionychNaDzien);
+        Notification.show(ret);
     }
 
     connectedCallback() {

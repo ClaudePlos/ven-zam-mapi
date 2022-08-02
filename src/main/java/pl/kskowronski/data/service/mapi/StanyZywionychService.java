@@ -1,12 +1,20 @@
 package pl.kskowronski.data.service.mapi;
 
+import org.hibernate.JDBCException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import pl.kskowronski.data.entity.mapi.MessageDTO;
 import pl.kskowronski.data.entity.mapi.StanZywionychNaDzienDTO;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.math.BigDecimal;
+import java.sql.CallableStatement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Timestamp;
@@ -110,6 +118,125 @@ public class StanyZywionychService {
 
         return stanZywionych;
 
+    }
+
+
+    public MessageDTO zapiszStanZywionychWDniu2(List<StanZywionychNaDzienDTO> stany, BigDecimal idKK, String czyKorekta, BigDecimal idOperator )
+    {
+        Session session = em.unwrap( Session.class );
+        int ileWierszy = stany.size();
+        int i = 1;
+        String retInfo = "\nZapisano: \n";
+        String retAkt = "";
+
+        for( StanZywionychNaDzienDTO s : stany )
+        {
+            try {
+
+                if ( s.getDataChanged() ) {
+
+                    session.doReturningWork(
+                            connection -> {
+                                try (CallableStatement function = connection
+                                        .prepareCall(
+                                                "{ ? = call nap_hl7_tools.wgraj_stan_zyw_w_dniu_plan3(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) }" )) {
+                                    function.registerOutParameter( 1, Types.INTEGER );
+                                    function.setBigDecimal( 2, idKK);
+                                    function.setBigDecimal( 3, s.getIdGrupaZywionych() );
+                                    function.setString( 4, s.getDietaNazwa() );
+                                    function.setTimestamp( 5, s.getdObr() );
+
+                                    function.setBigDecimal( 6, s.getSniadaniePlanIl());
+                                    function.setBigDecimal( 7, s.getDrugieSniadaniePlanIl());
+                                    function.setBigDecimal( 8, s.getObiadPlanIl() );
+                                    function.setBigDecimal( 9, s.getPodwieczorekPlanIl() );
+                                    function.setBigDecimal( 10, s.getKolacjaPlanIl() );
+                                    function.setBigDecimal( 11, s.getPosilekNocnyPlanIl() );
+
+                                    function.setBigDecimal( 12, s.getSniadanieKorIl() );
+                                    function.setBigDecimal( 13, s.getDrugieSniadanieKorIl());
+                                    function.setBigDecimal( 14, s.getObiadKorIl() );
+                                    function.setBigDecimal( 15, s.getPodwieczorekKorIl() );
+                                    function.setBigDecimal( 16, s.getKolacjaKorIl() );
+                                    function.setBigDecimal( 17, s.getPosilekNocnyKorIl() );
+
+                                    function.setString( 18, s.getSzUwagi() );
+                                    function.setBigDecimal( 19, idOperator );
+                                    function.setString( 20, czyKorekta );
+
+
+                                    function.execute();
+                                    return function.getInt( 1 );
+                                }
+                            });
+
+//                    em.createNativeQuery("begin "
+//                            + "nap_hl7_tools.wgraj_stan_zyw_w_dniu_plan2("
+//                            + "'" + idKK + "'"
+//                            + ",'" + s.getIdGrupaZywionych() + "'"
+//                            + ",'" + s.getDietaNazwa() + "'"
+//                            + ",to_date('" + s.getdObr().toString().substring(0, 10) + "','YYYY-MM-DD')"
+//
+//                            + "," + s.getSniadaniePlanIl()
+//                            + "," + s.getDrugieSniadaniePlanIl()
+//                            + "," + s.getObiadPlanIl()
+//                            + "," + s.getPodwieczorekPlanIl()
+//                            + "," + s.getKolacjaPlanIl()
+//                            + "," + s.getPosilekNocnyPlanIl()
+//
+//                            + "," + s.getSniadanieKorIl()
+//                            + "," + s.getDrugieSniadanieKorIl()
+//                            + "," + s.getObiadKorIl()
+//                            + "," + s.getPodwieczorekKorIl()
+//                            + "," + s.getKolacjaKorIl()
+//                            + "," + s.getPosilekNocnyKorIl()
+//
+//                            + ",'" + s.getSzUwagi() + "'"
+//
+//                            + "," + idOperator
+//                            + ",'" + czyKorekta + "'"
+//                            + ");"
+//                            + " end;").executeUpdate();
+
+                    if ( i == ileWierszy ) {
+                       retAkt =  aktualizujStanZywionychPoWgraniu( idKK, s.getIdGrupaZywionych(), s.getdObr().toString().substring(0, 10), idOperator );
+                    }
+
+                    s.setDataChanged(Boolean.FALSE);
+                    retInfo += s.getDietaNazwa() + "; ";
+                }
+
+            } catch ( JDBCException e) {
+                MessageDTO ret = new MessageDTO(e.getMessage() + retAkt, retInfo.substring(0, retInfo.length()-1));
+                return ret;
+            }
+            i++;
+        }
+
+        //System.out.print("End wgranie StZy, kk: " + kierKosztow + " Czy korekta?: " + czyKorekta + " Na dzien: TODO" );
+        MessageDTO ret = new MessageDTO("OK", retInfo.substring(0, retInfo.length()-1));
+        return ret;
+    }
+
+    public String aktualizujStanZywionychPoWgraniu(BigDecimal idKK, BigDecimal idGrupaZywionch, String data, BigDecimal idOperator)
+    {
+
+        try {
+
+            em.createNativeQuery("begin "
+                    + "nap_hl7_tools.AKTUALIZUJ_STANY_ZYWIONYCH("
+                    + "'" + idKK + "'"
+                    + "," + idGrupaZywionch
+                    + ",to_date('" + data + "','YYYY-MM-DD')"
+                    + "," + idOperator
+                    + ");"
+                    + " end;").executeUpdate();
+
+        } catch ( Exception e) {
+            return e.getMessage();
+        }
+
+        return "OK";
     }
 
 
