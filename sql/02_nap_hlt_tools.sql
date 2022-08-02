@@ -1,4 +1,7 @@
 
+-- PACKAGE (dwie funkcje)
+
+function aktualizuj_stany_zywionych3( v_kierunek_kosztow_id varchar2, v_gr_zywionych_id number, v_dzien date, v_id_operator number ) return number;
 function wgraj_stan_zyw_w_dniu_plan3(v_kierunek_kosztow_id varchar2, v_gr_zywionych_id number, v_dieta varchar2, v_dzien date
 --
 , v_sniadanie_ilosc number
@@ -20,6 +23,47 @@ function wgraj_stan_zyw_w_dniu_plan3(v_kierunek_kosztow_id varchar2, v_gr_zywion
 , v_id_operator number
 , v_czy_korekta varchar2 default 'N'
 ) return number;
+
+
+
+-- BODY (dwie funkcje)
+
+function aktualizuj_stany_zywionych3( v_kierunek_kosztow_id varchar2, v_gr_zywionych_id number, v_dzien date, v_id_operator number ) return number is
+p_id_grupa_zywionych number;
+--
+v_id_obiekt_procenty number;
+BEGIN
+
+p_id_grupa_zywionych := v_gr_zywionych_id;
+
+--02.
+
+SELECT ID_OBIEKT
+into v_id_obiekt_procenty
+FROM S_OBIEKTY SO
+WHERE SO.OBIEKT_MKOD ='MKOD_DIETA';
+
+
+
+UPDATE STANY_ZYWIONYCH
+set
+    ILOSC = nvl((select SUM(nvl(ilosc,0)* nvl(procent,0))
+                 from Stany_zywionych_posilki s,
+                      Posilki_procenty p
+                 where s.id_stan_zywionych = Stany_zywionych.id_stan_zywionych
+                   AND  S.ID_POSILEK =P.ID_POSILEK
+                   and  p.id_obiekt =v_id_obiekt_procenty
+                   and  p.identyfikator_obiektu =Stany_zywionych.id_dieta
+                   and  STANY_ZYWIONYCH.D_OBR between P.D_POCZATKOWA and P.D_KONCOWA),0)
+  ,ID_OPERATOR = v_id_operator -- id z tab. operator
+  ,D_ZMIANY = sysdate
+WHERE D_OBR= v_dzien
+  AND ID_GRUPA_ZYWIONYCH = p_id_grupa_zywionych;
+
+return 0;
+END aktualizuj_stany_zywionych3;
+
+
 
 
 

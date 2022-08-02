@@ -24,6 +24,9 @@ public class User {
     @Column(name="HASHEDPASSWORD")
     private String hashedPassword;
 
+    @Column(name="OPERATOR_ID")
+    private BigDecimal operatorId;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Transient
     private Set<Role> roles;
@@ -69,5 +72,13 @@ public class User {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public BigDecimal getOperatorId() {
+        return operatorId;
+    }
+
+    public void setOperatorId(BigDecimal operatorId) {
+        this.operatorId = operatorId;
     }
 }

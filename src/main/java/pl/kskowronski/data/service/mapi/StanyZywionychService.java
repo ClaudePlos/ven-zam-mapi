@@ -120,7 +120,7 @@ public class StanyZywionychService {
 
     }
 
-
+    @Transactional
     public MessageDTO zapiszStanZywionychWDniu2(List<StanZywionychNaDzienDTO> stany, BigDecimal idKK, String czyKorekta, BigDecimal idOperator )
     {
         Session session = em.unwrap( Session.class );
@@ -170,36 +170,8 @@ public class StanyZywionychService {
                                 }
                             });
 
-//                    em.createNativeQuery("begin "
-//                            + "nap_hl7_tools.wgraj_stan_zyw_w_dniu_plan2("
-//                            + "'" + idKK + "'"
-//                            + ",'" + s.getIdGrupaZywionych() + "'"
-//                            + ",'" + s.getDietaNazwa() + "'"
-//                            + ",to_date('" + s.getdObr().toString().substring(0, 10) + "','YYYY-MM-DD')"
-//
-//                            + "," + s.getSniadaniePlanIl()
-//                            + "," + s.getDrugieSniadaniePlanIl()
-//                            + "," + s.getObiadPlanIl()
-//                            + "," + s.getPodwieczorekPlanIl()
-//                            + "," + s.getKolacjaPlanIl()
-//                            + "," + s.getPosilekNocnyPlanIl()
-//
-//                            + "," + s.getSniadanieKorIl()
-//                            + "," + s.getDrugieSniadanieKorIl()
-//                            + "," + s.getObiadKorIl()
-//                            + "," + s.getPodwieczorekKorIl()
-//                            + "," + s.getKolacjaKorIl()
-//                            + "," + s.getPosilekNocnyKorIl()
-//
-//                            + ",'" + s.getSzUwagi() + "'"
-//
-//                            + "," + idOperator
-//                            + ",'" + czyKorekta + "'"
-//                            + ");"
-//                            + " end;").executeUpdate();
-
                     if ( i == ileWierszy ) {
-                       retAkt =  aktualizujStanZywionychPoWgraniu( idKK, s.getIdGrupaZywionych(), s.getdObr().toString().substring(0, 10), idOperator );
+                       retAkt =  aktualizujStanZywionychPoWgraniu( idKK, s.getIdGrupaZywionych(), s.getdObr(), idOperator );
                     }
 
                     s.setDataChanged(Boolean.FALSE);
@@ -218,21 +190,37 @@ public class StanyZywionychService {
         return ret;
     }
 
-    public String aktualizujStanZywionychPoWgraniu(BigDecimal idKK, BigDecimal idGrupaZywionch, String data, BigDecimal idOperator)
+    @Transactional
+    public String aktualizujStanZywionychPoWgraniu(BigDecimal idKK, BigDecimal idGrupaZywionch, Timestamp data, BigDecimal idOperator)
     {
-
+        Session session = em.unwrap( Session.class );
         try {
 
-            em.createNativeQuery("begin "
-                    + "nap_hl7_tools.AKTUALIZUJ_STANY_ZYWIONYCH("
-                    + "'" + idKK + "'"
-                    + "," + idGrupaZywionch
-                    + ",to_date('" + data + "','YYYY-MM-DD')"
-                    + "," + idOperator
-                    + ");"
-                    + " end;").executeUpdate();
+            session.doReturningWork(
+                    connection -> {
+                        try (CallableStatement function = connection
+                                .prepareCall(
+                                        "{ ? = call nap_hl7_tools.AKTUALIZUJ_STANY_ZYWIONYCH3(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) }" )) {
+                            function.registerOutParameter( 1, Types.INTEGER );
+                            function.setBigDecimal( 2, idKK);
+                            function.setBigDecimal( 3, idGrupaZywionch );
+                            function.setTimestamp( 4, data );
+                            function.setBigDecimal( 5, idOperator );
+                            function.execute();
+                            return function.getInt( 1 );
+                        }
+                    });
 
-        } catch ( Exception e) {
+//            em.createNativeQuery("begin "
+//                    + "nap_hl7_tools.AKTUALIZUJ_STANY_ZYWIONYCH("
+//                    + "'" + idKK + "'"
+//                    + "," + idGrupaZywionch
+//                    + ",to_date('" + data + "','YYYY-MM-DD')"
+//                    + "," + idOperator
+//                    + ");"
+//                    + " end;").executeUpdate();
+
+        } catch ( JDBCException e) {
             return e.getMessage();
         }
 

@@ -75,7 +75,7 @@ export class FeedView extends View {
             </div>
             <vaadin-grid .items="${this.stanyZywionychNaDzien}" style="width: 99%; height: 88%" theme="column-borders">
 
-                <vaadin-grid-column path="lp" width="50px"></vaadin-grid-column>
+                <vaadin-grid-column path="lp" width="60px"></vaadin-grid-column>
                 <vaadin-grid-column path="dietaNazwa" width="300px"></vaadin-grid-column>
   
                 
@@ -104,19 +104,22 @@ export class FeedView extends View {
 
     private valueRendererS = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
         model.item.sniadaniePlanIl !== undefined ? render(html` <vaadin-integer-field class="firld-plan"
-            has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "s")}
+            has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "s")} 
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}                                                                        
                value="${model.item.sniadaniePlanIl as number}" style="width: 110px"></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererIIS = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
         model.item.drugieSniadaniePlanIl !== undefined ? render(html` <vaadin-integer-field class="field-kor"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "2s")}
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}                                                                      
                value="${model.item.drugieSniadaniePlanIl as number}" style="width: 110px"></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererO = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
         model.item.obiadPlanIl !== undefined ? render(html` <vaadin-integer-field class="field-plan"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "o")}
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}
                value="${model.item.obiadPlanIl as number}" style="width: 110px"></vaadin-integer-field>`, root) : render(html``,root);
     }
 
@@ -126,15 +129,17 @@ export class FeedView extends View {
     //             style="border: none;width: 50px;font-size: 16px"></input>`, root);
     // };
 
-    updateState( item: StanZywionychNaDzienDTO, value: number, type: string ){
+    updateState( item: StanZywionychNaDzienDTO, value: number, type: string){
         if (type === "s") {
             item.sniadaniePlanIl = value as number;
-            item.dataChanged = true;
         }
         else if (type === "2s") {
             item.drugieSniadaniePlanIl = value as number;
-            item.dataChanged = true;
         }
+    }
+
+    updateClickState( item: StanZywionychNaDzienDTO){
+            item.dataChanged = true;
     }
 
     handleChange = (event: CustomEvent<{ value: string }>) => {
@@ -170,8 +175,12 @@ export class FeedView extends View {
     }
 
     async save() {
-        const ret = await StanyZywionychEndpoint.zapiszStanZyw(feedViewStore.startDate, this.idGZ, this.sortType, this.idKK, this.czyKorekta, 3,  this.stanyZywionychNaDzien);
+        const ret = await StanyZywionychEndpoint.zapiszStanZyw(feedViewStore.startDate, this.idGZ, this.sortType, this.idKK, this.czyKorekta
+            , 3,  this.stanyZywionychNaDzien.filter((obj) => { return obj.dataChanged === true }));
         Notification.show(ret);
+        this.stanyZywionychNaDzien.filter((obj) => { return obj.dataChanged === true }).forEach((stanZ) =>{
+            stanZ.dataChanged = false;
+        })
     }
 
     connectedCallback() {

@@ -53,19 +53,19 @@ export const views: ViewRoute[] = [
       return;
     },
   },
-  {
-    path: 'hello',
-    component: 'hello-world-view',
-    requiresLogin: true,
-    icon: 'la la-globe',
-    title: 'Hello World',
-    action: async (_context, _command) => {
-      if (!hasAccess(_context.route)) {
-        return _command.redirect('login');
-      }
-      return;
-    },
-  },
+  // {
+  //   path: 'hello',
+  //   component: 'hello-world-view',
+  //   requiresLogin: true,
+  //   icon: 'la la-globe',
+  //   title: 'Hello World',
+  //   action: async (_context, _command) => {
+  //     if (!hasAccess(_context.route)) {
+  //       return _command.redirect('login');
+  //     }
+  //     return;
+  //   },
+  // },
   {
     path: 'about',
     component: 'about-view',
