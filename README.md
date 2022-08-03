@@ -53,3 +53,7 @@ others npm packages:
 npm install date-fns --save
 
 </pre>pre>
+IP: 0.144
+Developing - TEST:
+sudo docker build -t ven-zam-mapi .
+sudo docker run -p 8088:8080 ven-zam-mapi:latest

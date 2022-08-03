@@ -23,7 +23,8 @@ public class SecurityConfiguration extends VaadinWebSecurityConfigurerAdapter {
     // The secret is stored in /config/secrets/application.properties by default.
     // Never commit the secret into version control; each environment should have
     // its own secret.
-    @Value("${com.example.application.auth.secret}")
+    //@Value("${com.example.application.auth.secret}")
+    @Value("WIBQJNs6I7QFb8vW/3q6UnFQ8jfFqVxND0at80yIlAA=")
     private String authSecret;
 
     @Bean
@@ -39,7 +40,7 @@ public class SecurityConfiguration extends VaadinWebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         setLoginView(http, "/login", LOGOUT_URL);
         setStatelessAuthentication(http, new SecretKeySpec(Base64.getDecoder().decode(authSecret), JwsAlgorithms.HS256),
-                "pl.skowronski");
+                "pl.kskowronski");
     }
 
     @Override

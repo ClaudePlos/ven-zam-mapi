@@ -1,7 +1,6 @@
-import { Route } from '@vaadin/router';
+import {Route} from '@vaadin/router';
 import Role from './generated/pl/kskowronski/data/Role';
-import {logout, setSessionExpired} from './auth';
-import { appStore } from './stores/app-store';
+import {appStore} from './stores/app-store';
 import './views/helloworld/hello-world-view';
 import './views/feed/feed-view';
 import './views/main-layout';
@@ -26,6 +25,7 @@ export const hasAccess = (route: Route) => {
   return true;
 };
 
+// @ts-ignore
 export const views: ViewRoute[] = [
   // place routes below (more info https://hilla.dev/docs/routing)
   {
@@ -67,6 +67,21 @@ export const views: ViewRoute[] = [
   //     return;
   //   },
   // },
+  {
+    path: 'users',
+    component: 'users-view',
+    requiresLogin: true,
+    icon: 'la la-file',
+    title: 'Użytkownicy',
+    rolesAllowed: [Role.ADMIN],
+    action: async (_context, _command) => {
+      if (!hasAccess(_context.route)) {
+        return _command.redirect('login');
+      }
+      await import('./views/users/users-view');
+      return;
+    },
+  },
   {
     path: 'about',
     component: 'about-view',

@@ -23,6 +23,7 @@ import "./feed-view.css"
 import StanZywionychNaDzienDTOModel
     from "Frontend/generated/pl/kskowronski/data/entity/mapi/StanZywionychNaDzienDTOModel";
 //import '@vaadin/vaadin-lumo-styles/utility.js';
+import { appStore } from '../../stores/app-store';
 
 @customElement('feed-view')
 export class FeedView extends View {
@@ -51,7 +52,7 @@ export class FeedView extends View {
 
         const { model } = this.binder;
 
-        return html`<div style="width: 99%; height: 100%; padding-left: 5px">
+        return html`<div style="width: 99%; height: 100%; padding-left: 5px"><p>${appStore.user?.roles}</p>
             <div><claude-date></claude-date>
                 <vaadin-combo-box  label="Kierunek kosztów"
                                    .items="${this.kkList}"
@@ -172,6 +173,7 @@ export class FeedView extends View {
     async getStanyZywionychNaDzien() {
         const stanyZywionychNaDzien = await StanyZywionychEndpoint.pobierzStanZywionychWdniuDlaGZ(feedViewStore.startDate, this.idGZ, this.sortType);
         this.stanyZywionychNaDzien = stanyZywionychNaDzien;
+        console.log(appStore.user?.roles?.length);
     }
 
     async save() {
