@@ -1,34 +1,53 @@
 import '@vaadin/button';
 import '@vaadin/notification';
-import { Notification } from '@vaadin/notification';
 import '@vaadin/text-field';
-import * as HelloWorldEndpoint from 'Frontend/generated/HelloWorldEndpoint';
+import '@vaadin/crud';
+import type { Crud, CrudNewEvent } from '@vaadin/crud';
+import '@vaadin/text-field';
 import { html } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, state, query } from 'lit/decorators.js';
 import { View } from '../../views/view';
+import User from "Frontend/generated/pl/kskowronski/data/entity/User";
+import {UserEndpoint} from "Frontend/generated/endpoints";
 
 @customElement('users-view')
 export class UsersView extends View {
-    name = '';
 
-    connectedCallback() {
-        super.connectedCallback();
-        this.classList.add('flex', 'p-m', 'gap-m', 'items-end');
+    // protected createRenderRoot() {
+    //     const root = super.createRenderRoot();
+    //     // Apply custom theme (only supported if your app uses one)
+    //     applyTheme(root);
+    //     return root;
+    // }
+
+    @query('vaadin-crud')
+    private crud!: Crud<Partial<User>>;
+
+    @state()
+    private items: User[] = [];
+
+    async firstUpdated() {
+        const users = await UserEndpoint.findAll();
+        this.items = users;
     }
 
     render() {
         return html`
-      <vaadin-text-field label="Your name" @value-changed=${this.nameChanged}></vaadin-text-field>
-      <vaadin-button @click=${this.sayHello}>Say hello</vaadin-button>
+      <vaadin-crud
+        include="username, name, operatorId, hashedPassword"
+        .items="${this.items}"
+        @new="${this.handleNewItem}"
+      ></vaadin-crud>
     `;
     }
 
-    nameChanged(e: CustomEvent) {
-        this.name = e.detail.value;
+    handleNewItem(e: CrudNewEvent) {
+        // Cancel event to allow setting a custom item instance
+        e.preventDefault();
+        this.crud.editedItem = {
+            name: '@vaadin.com',
+            username: 'Developer',
+        };
     }
 
-    async sayHello() {
-        const serverResponse = await HelloWorldEndpoint.sayHello(this.name);
-        Notification.show(serverResponse);
-    }
 }

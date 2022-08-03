@@ -52,7 +52,7 @@ export class FeedView extends View {
 
         const { model } = this.binder;
 
-        return html`<div style="width: 99%; height: 100%; padding-left: 5px"><p>${appStore.user?.roles}</p>
+        return html`<div style="width: 99%; height: 100%; padding-left: 5px">
             <div><claude-date></claude-date>
                 <vaadin-combo-box  label="Kierunek kosztów"
                                    .items="${this.kkList}"
@@ -173,12 +173,11 @@ export class FeedView extends View {
     async getStanyZywionychNaDzien() {
         const stanyZywionychNaDzien = await StanyZywionychEndpoint.pobierzStanZywionychWdniuDlaGZ(feedViewStore.startDate, this.idGZ, this.sortType);
         this.stanyZywionychNaDzien = stanyZywionychNaDzien;
-        console.log(appStore.user?.roles?.length);
     }
 
     async save() {
         const ret = await StanyZywionychEndpoint.zapiszStanZyw(feedViewStore.startDate, this.idGZ, this.sortType, this.idKK, this.czyKorekta
-            , 3,  this.stanyZywionychNaDzien.filter((obj) => { return obj.dataChanged === true }));
+            , appStore.user?.operatorId,  this.stanyZywionychNaDzien.filter((obj) => { return obj.dataChanged === true }));
         Notification.show(ret);
         this.stanyZywionychNaDzien.filter((obj) => { return obj.dataChanged === true }).forEach((stanZ) =>{
             stanZ.dataChanged = false;

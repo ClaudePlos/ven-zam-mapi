@@ -5,8 +5,10 @@ import pl.kskowronski.data.entity.User;
 import pl.kskowronski.security.AuthenticatedUser;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import dev.hilla.Endpoint;
+import dev.hilla.Nonnull;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,5 +30,10 @@ public class UserEndpoint {
             user.get().setRoles(Collections.singleton(Role.USER));
         }
         return user;
+    }
+
+    public @Nonnull List<@Nonnull User> findAll() {
+      var users = authenticatedUser.findAll();
+      return users;
     }
 }
