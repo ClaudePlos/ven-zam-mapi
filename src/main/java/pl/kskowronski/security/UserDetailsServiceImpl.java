@@ -32,11 +32,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByUsername(username);
 
         if (user != null) {
-            if (user.getUsername().equals("user")) {
+            if (!user.getUsername().equals("AdminMAPI")) {
                 user.setRoles(Collections.singleton(Role.USER));
             }
 
-            if (user.getUsername().equals("admin")) {
+            if (user.getUsername().equals("AdminMAPI")) {
                 user.setRoles(Stream.of(Role.USER, Role.ADMIN).collect(Collectors.toSet()));
             }
         }

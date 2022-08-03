@@ -1,5 +1,6 @@
 import { Route } from '@vaadin/router';
 import Role from './generated/pl/kskowronski/data/Role';
+import {logout, setSessionExpired} from './auth';
 import { appStore } from './stores/app-store';
 import './views/helloworld/hello-world-view';
 import './views/feed/feed-view';

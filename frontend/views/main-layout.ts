@@ -47,6 +47,7 @@ export class MainLayout extends Layout {
                 `
               )}
             </ul>
+            <vaadin-item class="menu-item-link" @click=${() => logout()}><span class="la la-sign-out menu-item-icon"></span>Wyloguj</vaadin-item>
           </nav>
           <footer class="footer">
             ${appStore.user
@@ -77,7 +78,7 @@ export class MainLayout extends Layout {
   }
 
   private renderLogoutOptions(root: HTMLElement) {
-    render(html`<vaadin-list-box><vaadin-item @click=${() => logout()}>Logout</vaadin-item></vaadin-list-box>`, root);
+    render(html`<vaadin-list-box><vaadin-item @click=${() => logout()}>Wyloguj</vaadin-item></vaadin-list-box>`, root);
   }
 
   private getMenuRoutes(): RouteInfo[] {
