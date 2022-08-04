@@ -64,7 +64,7 @@ export class UsersView extends View {
               <th>.</th>
           </tr>
           ${this.items.map((item) =>
-                  html`<tr><td>${item.username}</td><td>${item.name}</td><td>${item.operatorId}</td><td><button @click=${this.addToDo}>Add</button></td></tr>`
+                  html`<tr><td>${item.username}</td><td>${item.name}</td><td>${item.operatorId}</td><td><button @click=${(e: Event) => this.addToDo(item.id, item.username)}>Add</button></td></tr>`
           )}
       </table>
       <ul>
@@ -76,8 +76,8 @@ export class UsersView extends View {
     `;
     }
 
-    addToDo() {
-        Notification.show("ret");
+    addToDo(id: number | undefined, userName: string | undefined) {
+        Notification.show("ret:" + id + " " + userName);
     }
 
     handleNewItem(e: CrudNewEvent) {
