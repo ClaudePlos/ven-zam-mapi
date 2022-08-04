@@ -9,6 +9,7 @@ import { customElement, state, query } from 'lit/decorators.js';
 import { View } from '../../views/view';
 import User from "Frontend/generated/pl/kskowronski/data/entity/User";
 import {UserEndpoint} from "Frontend/generated/endpoints";
+import {Notification} from "@vaadin/notification";
 
 @customElement('users-view')
 export class UsersView extends View {
@@ -33,12 +34,50 @@ export class UsersView extends View {
 
     render() {
         return html`
+            <style>
+                table {
+                    font-family: arial, sans-serif;
+                    border-collapse: collapse;
+                    width: 100%;
+                }
+
+                td, th {
+                    border: 1px solid #dddddd;
+                    text-align: left;
+                    padding: 8px;
+                }
+
+                tr:nth-child(even) {
+                    background-color: #dddddd;
+                }
+            </style>
       <vaadin-crud
         include="username, name, operatorId, hashedPassword"
         .items="${this.items}"
         @new="${this.handleNewItem}"
       ></vaadin-crud>
+      <table>
+          <tr>
+              <th>Username</th>
+              <th>Name</th>
+              <th>Operatorid</th>
+              <th>.</th>
+          </tr>
+          ${this.items.map((item) =>
+                  html`<tr><td>${item.username}</td><td>${item.name}</td><td>${item.operatorId}</td><td><button @click=${this.addToDo}>Add</button></td></tr>`
+          )}
+      </table>
+      <ul>
+          <!-- TODO: Render list items. -->
+          ${this.items.map((item) =>
+                  html`<li>${item.username}</li>`
+          )}
+      </ul>
     `;
+    }
+
+    addToDo() {
+        Notification.show("ret");
     }
 
     handleNewItem(e: CrudNewEvent) {
