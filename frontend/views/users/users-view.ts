@@ -10,6 +10,8 @@ import { View } from '../../views/view';
 import User from "Frontend/generated/pl/kskowronski/data/entity/User";
 import {UserEndpoint} from "Frontend/generated/endpoints";
 import {Notification} from "@vaadin/notification";
+import "./users-add/users-add-view"
+import {usersAddViewStore} from "Frontend/views/users/users-add/users-add-view-store";
 
 @customElement('users-view')
 export class UsersView extends View {
@@ -34,28 +36,23 @@ export class UsersView extends View {
 
     render() {
         return html`
-            <style>
-                table {
-                    font-family: arial, sans-serif;
-                    border-collapse: collapse;
-                    width: 100%;
-                }
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
 
-                td, th {
-                    border: 1px solid #dddddd;
-                    text-align: left;
-                    padding: 8px;
-                }
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
 
-                tr:nth-child(even) {
-                    background-color: #dddddd;
-                }
-            </style>
-      <vaadin-crud
-        include="username, name, operatorId, hashedPassword"
-        .items="${this.items}"
-        @new="${this.handleNewItem}"
-      ></vaadin-crud>
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+    </style>
       <table>
           <tr>
               <th>Username</th>
@@ -64,7 +61,12 @@ export class UsersView extends View {
               <th>.</th>
           </tr>
           ${this.items.map((item) =>
-                  html`<tr><td>${item.username}</td><td>${item.name}</td><td>${item.operatorId}</td><td><button @click=${(e: Event) => this.addToDo(item.id, item.username)}>Add</button></td></tr>`
+                  html`<tr>
+                        <td>${item.username}</td>
+                        <td>${item.name}</td>
+                        <td>${item.operatorId}</td>
+                        <td><button @click=${(e: Event) => this.addToDo(item.id, item.username)}>Update</button></td>
+                      </tr>`
           )}
       </table>
       <ul>
@@ -73,20 +75,14 @@ export class UsersView extends View {
                   html`<li>${item.username}</li>`
           )}
       </ul>
+    <users-add-view></users-add-view>
     `;
     }
 
     addToDo(id: number | undefined, userName: string | undefined) {
         Notification.show("ret:" + id + " " + userName);
+        usersAddViewStore.openPopUp(userName);
     }
 
-    handleNewItem(e: CrudNewEvent) {
-        // Cancel event to allow setting a custom item instance
-        e.preventDefault();
-        this.crud.editedItem = {
-            name: '@vaadin.com',
-            username: 'Developer',
-        };
-    }
 
 }
