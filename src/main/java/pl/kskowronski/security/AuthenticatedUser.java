@@ -5,6 +5,7 @@ import pl.kskowronski.data.service.UserRepository;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinServletRequest;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,14 @@ public class AuthenticatedUser {
 
     public List<User> findAll() {
         return userRepository.findAll();
+    }
+
+    public BigDecimal getLastId() {
+        return userRepository.getLastId();
+    }
+
+    public User save(User user) {
+        return userRepository.save(user);
     }
 
 }

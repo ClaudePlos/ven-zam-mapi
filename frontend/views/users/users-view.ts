@@ -65,23 +65,18 @@ export class UsersView extends View {
                         <td>${item.username}</td>
                         <td>${item.name}</td>
                         <td>${item.operatorId}</td>
-                        <td><button @click=${(e: Event) => this.addToDo(item.id, item.username)}>Update</button></td>
+                        <td><button @click=${(e: Event) => this.addNewUser(item.id, item.name, item.username, item.operatorId)}>Update</button></td>
                       </tr>`
           )}
       </table>
-      <ul>
-          <!-- TODO: Render list items. -->
-          ${this.items.map((item) =>
-                  html`<li>${item.username}</li>`
-          )}
-      </ul>
+      <button @click=${(e: Event) => this.addNewUser(undefined, "", "", undefined )}>New</button>
     <users-add-view></users-add-view>
     `;
     }
 
-    addToDo(id: number | undefined, userName: string | undefined) {
-        Notification.show("ret:" + id + " " + userName);
-        usersAddViewStore.openPopUp(userName);
+    addNewUser(id: number | undefined, name: string | undefined, userName: string | undefined, opId: number | undefined) {
+       // Notification.show("ret:" + id + " " + userName);
+        usersAddViewStore.openPopUp(name, userName, opId, id);
     }
 
 

@@ -2,7 +2,11 @@ import {makeAutoObservable} from "mobx";
 
 class UsersAddViewStore {
 
+    id: number | undefined;
     name: string | undefined = "";
+    userName: string | undefined = "";
+    opId: number | undefined;
+
     display: string | undefined = "none";
 
     constructor() {
@@ -13,8 +17,11 @@ class UsersAddViewStore {
         this.name = newDate;
     }
 
-    openPopUp(name: string | undefined){
+    openPopUp(name: string | undefined, userName: string | undefined, opId: number | undefined, id: number | undefined){
         this.name = name;
+        this.userName = userName;
+        this.opId = opId;
+        this.id = id;
         this.display = "block";
     }
 

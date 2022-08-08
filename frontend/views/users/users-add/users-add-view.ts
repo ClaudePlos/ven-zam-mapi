@@ -1,12 +1,32 @@
 import {html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, query, state} from 'lit/decorators.js';
 import {usersAddViewStore} from './users-add-view-store';
 import {MobxLitElement} from "@adobe/lit-mobx";
 import {UserEndpoint} from "Frontend/generated/endpoints";
+import {Notification} from "@vaadin/notification";
+import User from "Frontend/generated/pl/kskowronski/data/entity/User";
 
 @customElement('users-add-view')
 class UsersAddView extends MobxLitElement {
 
+    @state()
+    private user: User | undefined;
+
+    @query('input#inName')
+    private inputName!: HTMLInputElement;
+
+    @query('input#inUserName')
+    private inputUserName!: HTMLInputElement;
+
+    @query('input#inOpId')
+    private inputOpId!: HTMLInputElement;
+
+    @query('input#inPass')
+    private inputPass!: HTMLInputElement;
+
+    async firstUpdated() {
+        //Notification.show("opened")
+    }
 
     protected render() {
         return html`
@@ -53,16 +73,38 @@ class UsersAddView extends MobxLitElement {
                 }
             </style>
             <div id="myModal" class="modal">
-
                 <!-- Modal content -->
                 <div class="modal-content">
                     <span class="close" @click=${this.close}>&times;</span>
-                    <p>Some text in the Modal..</p>
-                    <p>Login: ${usersAddViewStore.name}</p>
+              
+                    <p>Wypełnij dane: </p>
+                        <label for="inName">Nazwa użytkownika</label></br>
+                        <input type="text" id="inName" value="${usersAddViewStore.name}"></br>
+                        <label for="inUserName">Login</label></br>
+                        <input type="text" id="inUserName" value="${usersAddViewStore.userName}"></br>
+                        <label for="inOpId">OperatorId</label></br>
+                        <input type="text" id="inOpId" value="${usersAddViewStore.opId}"></br>
+                        <label for="inOpId">Hasło</label></br>
+                        <input type="password" id="inPass"></br>
+                    <p><button @click=${this._addNewUser}>Dodaj</button></p>
+              
                 </div>
-
             </div>
       `;
+    }
+
+    private _addNewUser(e: Event) {
+        //Notification.show("name: " + this.inputName.value + "userName: " + this.inputUserName.value);
+        this.user = {};
+        if (this.user){
+            this.user.id = usersAddViewStore.id;
+            this.user.name = this.inputName.value;
+            this.user.username = this.inputUserName.value;
+            this.user.operatorId = Number(this.inputOpId.value);
+            this.user.hashedPassword = this.inputPass.value;
+            UserEndpoint.addNewUser(this.user);
+        }
+
     }
 
     private close(e: Event) {
