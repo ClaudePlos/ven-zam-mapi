@@ -16,22 +16,12 @@ import {usersAddViewStore} from "Frontend/views/users/users-add/users-add-view-s
 @customElement('users-view')
 export class UsersView extends View {
 
-    // protected createRenderRoot() {
-    //     const root = super.createRenderRoot();
-    //     // Apply custom theme (only supported if your app uses one)
-    //     applyTheme(root);
-    //     return root;
-    // }
-
     @query('vaadin-crud')
     private crud!: Crud<Partial<User>>;
 
-    @state()
-    private items: User[] = [];
-
     async firstUpdated() {
         const users = await UserEndpoint.findAll();
-        this.items = users;
+        usersAddViewStore.items = users;
     }
 
     render() {
@@ -60,12 +50,15 @@ export class UsersView extends View {
               <th>Operatorid</th>
               <th>.</th>
           </tr>
-          ${this.items.map((item) =>
+          ${usersAddViewStore.items.map((item) =>
                   html`<tr>
                         <td>${item.username}</td>
                         <td>${item.name}</td>
                         <td>${item.operatorId}</td>
-                        <td><button @click=${(e: Event) => this.addNewUser(item.id, item.name, item.username, item.operatorId)}>Update</button></td>
+                        <td>
+                            <button @click=${(e: Event) => this.addNewUser(item.id, item.name, item.username, item.operatorId)}>Update</button>
+                            <button @click=${(e: Event) => this.deleteUser(item.id)}>Delete</button>
+                        </td>
                       </tr>`
           )}
       </table>
@@ -77,6 +70,14 @@ export class UsersView extends View {
     addNewUser(id: number | undefined, name: string | undefined, userName: string | undefined, opId: number | undefined) {
        // Notification.show("ret:" + id + " " + userName);
         usersAddViewStore.openPopUp(name, userName, opId, id);
+    }
+
+    async deleteUser(id: number | undefined) {
+      const ret = await UserEndpoint.deleteUser(id);
+      if ( ret === "OK" ){
+          const index = usersAddViewStore.items.findIndex( obj => obj.id === id);
+          usersAddViewStore.items.splice(index);
+      }
     }
 
 

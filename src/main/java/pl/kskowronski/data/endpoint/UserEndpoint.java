@@ -53,4 +53,9 @@ public class UserEndpoint {
         User userRet = authenticatedUser.save(user);
         return userRet;
     }
+
+    public String deleteUser(BigDecimal id) {
+        authenticatedUser.delete(id);
+        return "OK";
+    }
 }

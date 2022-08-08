@@ -54,4 +54,8 @@ public class AuthenticatedUser {
         return userRepository.save(user);
     }
 
+    public void delete(BigDecimal id) {
+        userRepository.deleteById(id);
+    }
+
 }

@@ -93,7 +93,7 @@ class UsersAddView extends MobxLitElement {
       `;
     }
 
-    private _addNewUser(e: Event) {
+    async _addNewUser(e: Event) {
         //Notification.show("name: " + this.inputName.value + "userName: " + this.inputUserName.value);
         this.user = {};
         if (this.user){
@@ -102,8 +102,13 @@ class UsersAddView extends MobxLitElement {
             this.user.username = this.inputUserName.value;
             this.user.operatorId = Number(this.inputOpId.value);
             this.user.hashedPassword = this.inputPass.value;
-            UserEndpoint.addNewUser(this.user);
+            this.user = await UserEndpoint.addNewUser(this.user);
+            if (this.user) {
+                usersAddViewStore.items.push(this.user);
+            }
         }
+
+        usersAddViewStore.display = "none";
 
     }
 

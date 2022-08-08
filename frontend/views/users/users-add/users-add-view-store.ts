@@ -1,4 +1,5 @@
 import {makeAutoObservable} from "mobx";
+import User from "Frontend/generated/pl/kskowronski/data/entity/User";
 
 class UsersAddViewStore {
 
@@ -8,6 +9,8 @@ class UsersAddViewStore {
     opId: number | undefined;
 
     display: string | undefined = "none";
+
+    public items: User[] = [];
 
     constructor() {
         makeAutoObservable(this);

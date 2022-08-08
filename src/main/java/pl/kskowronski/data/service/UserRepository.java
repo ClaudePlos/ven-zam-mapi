@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User, UUID> {
+public interface UserRepository extends JpaRepository<User, BigDecimal> {
 
     User findByUsername(String username);
 
