@@ -53,7 +53,7 @@ export class KkUserView extends MobxLitElement {
     };
 
     render() {
-        return html`<p>Zaznaczony użytkownik to: ${kkUserViewStore.username}</p>
+        return html`<div><p>Zaznaczony użytkownik to: <b><h3> ${kkUserViewStore.username}</h3></b></p></div>
       <div class="grids-container">
         <vaadin-grid
           .items="${kkUserViewStore.grid1Items}"

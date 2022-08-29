@@ -30,15 +30,9 @@ class KkUserViewStore {
     async updateGrid() {
         if (kkUserViewStore.userId !== null) {
             const kk  = await KierunekKosztowEndpoint.getAllKK();
-            kk.forEach((value, index) => {
-                this.userKKList.forEach((value2, index2) => {
-                    if (value.kierunekKosztowKod === value2.kierunekKosztowKod) {
-                        kk.splice(index,1)
-                    }
-                })
-            });
+            const kkRefreshed = kk.filter(item => !this.userKKList.some(itemToBeRemoved => itemToBeRemoved.idKierunekKosztow === item.idKierunekKosztow));
             this.grid1Items = this.userKKList;
-            this.grid2Items = kk;
+            this.grid2Items = kkRefreshed;
         }
     }
 
