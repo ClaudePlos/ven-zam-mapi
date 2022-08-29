@@ -11,7 +11,9 @@ import User from "Frontend/generated/pl/kskowronski/data/entity/User";
 import {UserEndpoint} from "Frontend/generated/endpoints";
 import {Notification} from "@vaadin/notification";
 import "./users-add/users-add-view"
+import "./kk-user/kk-user-view"
 import {usersAddViewStore} from "Frontend/views/users/users-add/users-add-view-store";
+import {kkUserViewStore} from "Frontend/views/users/kk-user/kk-user-view-store";
 
 @customElement('users-view')
 export class UsersView extends View {
@@ -37,21 +39,23 @@ export class UsersView extends View {
             border: 1px solid #dddddd;
             text-align: left;
             padding: 8px;
+            cursor: pointer;
         }
 
         tr:nth-child(even) {
             background-color: #dddddd;
         }
+        
     </style>
       <table>
           <tr>
               <th>Username</th>
               <th>Name</th>
               <th>Operatorid</th>
-              <th>.</th>
+              <th></th>
           </tr>
           ${usersAddViewStore.items.map((item) =>
-                  html`<tr>
+                  html`<tr @click=${(e: Event) => this.openKKDialog(item.id, item.username)}>
                         <td>${item.username}</td>
                         <td>${item.name}</td>
                         <td>${item.operatorId}</td>
@@ -64,6 +68,7 @@ export class UsersView extends View {
       </table>
       <button @click=${(e: Event) => this.addNewUser(undefined, "", "", undefined )}>New</button>
     <users-add-view></users-add-view>
+    <kk-user-view></kk-user-view>
     `;
     }
 
@@ -78,6 +83,10 @@ export class UsersView extends View {
           const index = usersAddViewStore.items.findIndex( obj => obj.id === id);
           usersAddViewStore.items.splice(index);
       }
+    }
+
+    openKKDialog(userId: number | undefined, username: string | undefined){
+        kkUserViewStore.dateChanged(userId, username);
     }
 
 
