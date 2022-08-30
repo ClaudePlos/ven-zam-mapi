@@ -6,7 +6,7 @@ import { KierunekKosztowEndpoint } from "Frontend/generated/endpoints";
 import KierunekKosztowVO from "Frontend/generated/pl/kskowronski/data/entity/mapi/KierunekKosztowVO";
 import { applyTheme } from 'Frontend/generated/theme';
 import {MobxLitElement} from "@adobe/lit-mobx";
-import {kkUserViewStore} from "Frontend/views/users/kk-user/kk-user-view-store";
+import {kkUserViewStore} from "Frontend/views/admin/users/kk-user/kk-user-view-store";
 
 @customElement('kk-user-view')
 export class KkUserView extends MobxLitElement {

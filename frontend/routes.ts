@@ -45,7 +45,7 @@ export const views: ViewRoute[] = [
     path: 'feed',
     component: 'feed-view',
     requiresLogin: true,
-    icon: 'la la-globe',
+    icon: 'la la-star',
     title: 'Stan żywionych na dzień',
     action: async (_context, _command) => {
       if (!hasAccess(_context.route)) {
@@ -54,31 +54,33 @@ export const views: ViewRoute[] = [
       return;
     },
   },
-  // {
-  //   path: 'hello',
-  //   component: 'hello-world-view',
-  //   requiresLogin: true,
-  //   icon: 'la la-globe',
-  //   title: 'Hello World',
-  //   action: async (_context, _command) => {
-  //     if (!hasAccess(_context.route)) {
-  //       return _command.redirect('login');
-  //     }
-  //     return;
-  //   },
-  // },
   {
     path: 'users',
     component: 'users-view',
     requiresLogin: true,
-    icon: 'la la-file',
+    icon: 'la la-qq',
     title: 'Użytkownicy',
     rolesAllowed: [Role.ADMIN],
     action: async (_context, _command) => {
       if (!hasAccess(_context.route)) {
         return _command.redirect('login');
       }
-      await import('./views/users/users-view');
+      await import('./views/admin/users/users-view');
+      return;
+    },
+  },
+  {
+    path: 'zam-blockade-hours',
+    component: 'zam-blockade-hours-view',
+    requiresLogin: true,
+    icon: 'la la-circle',
+    title: 'KK blokada godzin zam.',
+    rolesAllowed: [Role.ADMIN],
+    action: async (_context, _command) => {
+      if (!hasAccess(_context.route)) {
+        return _command.redirect('login');
+      }
+      await import('./views/admin/zam-blockade-hours/zam-blockade-hours-view');
       return;
     },
   },
