@@ -8,7 +8,7 @@ class KkUserViewStore {
     username: string | undefined = "";
     userKKList: KierunekKosztowVO[] = [];
 
-    public grid1Items: KierunekKosztowVO[] = [];
+    public grid1Items: KierunekKosztowVO[]  = [];
 
     public grid2Items: KierunekKosztowVO[] = [];
 
@@ -24,6 +24,7 @@ class KkUserViewStore {
 
     async getUserKK() {
         this.userKKList = await KierunekKosztowEndpoint.findAllUserKK(this.userId)
+        // @ts-ignore
         await this.updateGrid();
     }
 
@@ -31,6 +32,9 @@ class KkUserViewStore {
         if (kkUserViewStore.userId !== null) {
             const kk  = await KierunekKosztowEndpoint.getAllKK();
             const kkRefreshed = kk.filter(item => !this.userKKList.some(itemToBeRemoved => itemToBeRemoved.idKierunekKosztow === item.idKierunekKosztow));
+            // @ts-ignore
+            kkRefreshed.sort((a, b) => (a.kierunekKosztowNazwa > b.kierunekKosztowNazwa) ? 1 : -1);
+
             this.grid1Items = this.userKKList;
             this.grid2Items = kkRefreshed;
         }

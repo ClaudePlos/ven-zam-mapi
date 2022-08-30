@@ -28,8 +28,6 @@ export class KkUserView extends MobxLitElement {
       vaadin-grid {
         width: 300px;
         height: 300px;
-        margin-left: 0.5rem;
-        margin-top: 0.5rem;
         align-self: unset;
       }
     `;

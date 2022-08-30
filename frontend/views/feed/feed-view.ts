@@ -44,7 +44,7 @@ export class FeedView extends View {
     private binder = new Binder(this, StanZywionychNaDzienDTOModel);
 
     async firstUpdated() {
-        const kkList = await KierunekKosztowEndpoint.getAllKK();
+        const kkList = await KierunekKosztowEndpoint.findAllUserKK(appStore.user?.id);
         this.kkList = kkList;
     }
 

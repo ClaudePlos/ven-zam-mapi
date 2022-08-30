@@ -42,11 +42,14 @@ export class UsersView extends View {
             cursor: pointer;
         }
 
-        tr:nth-child(even) {
-            background-color: #dddddd;
+        .userTable {
+            margin: 10px;
         }
+
+        
         
     </style>
+    <div class="userTable">
       <table>
           <tr>
               <th>Username</th>
@@ -67,8 +70,10 @@ export class UsersView extends View {
           )}
       </table>
       <button @click=${(e: Event) => this.addNewUser(undefined, "", "", undefined )}>New</button>
-    <users-add-view></users-add-view>
-    <kk-user-view></kk-user-view>
+        <br>
+     <users-add-view></users-add-view>
+     <kk-user-view></kk-user-view>
+    </div>
     `;
     }
 
