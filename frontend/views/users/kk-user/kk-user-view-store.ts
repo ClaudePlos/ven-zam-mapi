@@ -33,11 +33,20 @@ class KkUserViewStore {
             const kk  = await KierunekKosztowEndpoint.getAllKK();
             const kkRefreshed = kk.filter(item => !this.userKKList.some(itemToBeRemoved => itemToBeRemoved.idKierunekKosztow === item.idKierunekKosztow));
             // @ts-ignore
-            kkRefreshed.sort((a, b) => (a.kierunekKosztowNazwa > b.kierunekKosztowNazwa) ? 1 : -1);
+            kkRefreshed.sort((a, b) => (this.fixPolishLetter(a.kierunekKosztowNazwa) > this.fixPolishLetter(b.kierunekKosztowNazwa).replace("Ł",'L')) ? 1 : -1);
+
+            // kkRefreshed.sort(function(a, b){
+            //     // @ts-ignore
+            //     return a.kierunekKosztowNazwa - b.kierunekKosztowNazwa;
+            // });
 
             this.grid1Items = this.userKKList;
             this.grid2Items = kkRefreshed;
         }
+    }
+
+    private fixPolishLetter( text: String){
+        return text.replace("Ł",'L').replace("Ś","S").toUpperCase()
     }
 
 }

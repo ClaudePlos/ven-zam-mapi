@@ -25,7 +25,7 @@ public class KierunekKosztowEndpoint {
     }
 
     public @Nonnull List<@Nonnull KierunekKosztowVO> getAllKK() {
-        List<KierunekKosztowVO> allKK = kierunekKosztowRepo.findAll(Sort.by(Sort.Direction.ASC, "kierunekKosztowNazwa"));
+        List<KierunekKosztowVO> allKK = kierunekKosztowRepo.findAll(Sort.by(Sort.Direction.ASC, "idKierunekKosztow"));
         return allKK;
     }
 
