@@ -2,14 +2,13 @@ import '@vaadin/button';
 import '@vaadin/notification';
 import '@vaadin/text-field';
 import '@vaadin/crud';
-import type { Crud, CrudNewEvent } from '@vaadin/crud';
+import type { Crud } from '@vaadin/crud';
 import '@vaadin/text-field';
 import { html } from 'lit';
 import { customElement, state, query } from 'lit/decorators.js';
 import { View } from '../../view';
 import User from "Frontend/generated/pl/kskowronski/data/entity/User";
 import {UserEndpoint} from "Frontend/generated/endpoints";
-import {Notification} from "@vaadin/notification";
 import "./users-add/users-add-view"
 import "./kk-user/kk-user-view"
 import {usersAddViewStore} from "Frontend/views/admin/users/users-add/users-add-view-store";

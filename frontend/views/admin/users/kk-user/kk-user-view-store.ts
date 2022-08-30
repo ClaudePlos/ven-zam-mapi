@@ -1,6 +1,7 @@
 import {makeAutoObservable} from "mobx";
 import KierunekKosztowVO from "Frontend/generated/pl/kskowronski/data/entity/mapi/KierunekKosztowVO";
 import {KierunekKosztowEndpoint} from "Frontend/generated/endpoints";
+import {appStore} from "Frontend/stores/app-store";
 
 class KkUserViewStore {
 
@@ -32,21 +33,13 @@ class KkUserViewStore {
         if (kkUserViewStore.userId !== null) {
             const kk  = await KierunekKosztowEndpoint.getAllKK();
             const kkRefreshed = kk.filter(item => !this.userKKList.some(itemToBeRemoved => itemToBeRemoved.idKierunekKosztow === item.idKierunekKosztow));
-            // @ts-ignore
-            kkRefreshed.sort((a, b) => (this.fixPolishLetter(a.kierunekKosztowNazwa) > this.fixPolishLetter(b.kierunekKosztowNazwa).replace("Ł",'L')) ? 1 : -1);
 
-            // kkRefreshed.sort(function(a, b){
-            //     // @ts-ignore
-            //     return a.kierunekKosztowNazwa - b.kierunekKosztowNazwa;
-            // });
+            // @ts-ignore
+            kkRefreshed.sort((a, b) => (appStore.fixPolishLetter(a.kierunekKosztowNazwa) > appStore.fixPolishLetter(b.kierunekKosztowNazwa)) ? 1 : -1);
 
             this.grid1Items = this.userKKList;
             this.grid2Items = kkRefreshed;
         }
-    }
-
-    private fixPolishLetter( text: String){
-        return text.replace("Ł",'L').replace("Ś","S").toUpperCase()
     }
 
 }

@@ -49,5 +49,10 @@ export class AppStore {
   isUserInRole(role: Role) {
     return this.user?.roles?.includes(role);
   }
+
+  public fixPolishLetter( text: String | undefined ){
+    // @ts-ignore
+    return text.replace("Ł",'L').replace("Ś","S").toUpperCase()
+  }
 }
 export const appStore = new AppStore();
