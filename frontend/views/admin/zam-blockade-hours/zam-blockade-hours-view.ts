@@ -3,25 +3,28 @@ import { customElement, state, query } from 'lit/decorators.js';
 import {View} from "Frontend/views/view";
 import {html} from "lit";
 import KierunekKosztowVO from "Frontend/generated/pl/kskowronski/data/entity/mapi/KierunekKosztowVO";
-import {KierunekKosztowEndpoint} from "Frontend/generated/endpoints";
+import {KierunekKosztowEndpoint, NapZamBlockadeEndpoint} from "Frontend/generated/endpoints";
 import {appStore} from "Frontend/stores/app-store";
 import { Binder, field } from '@hilla/form';
-import KierunekKosztowVOModel from "Frontend/generated/pl/kskowronski/data/entity/mapi/KierunekKosztowVOModel";
 import {Notification} from "@vaadin/notification";
+import NapZamBlockadeVO from "Frontend/generated/pl/kskowronski/data/entity/mapi/nap/NapZamBlockadeVO";
+import NapZamBlockadeVOModel from "Frontend/generated/pl/kskowronski/data/entity/mapi/nap/NapZamBlockadeVOModel";
 
 
 @customElement('zam-blockade-hours-view')
 export class ZamBlockadeHoursView extends View {
 
-    idKK: number = 0;
-    butAdd1Disabled: boolean = false;
+    idKK: string = "";
+
+    @state()
+    private selectedKK: number = 0;
 
     @state()
     private kkList: KierunekKosztowVO[] = [];
 
-    @state()
-    private todos: KierunekKosztowVO[] = [];
-    private binder = new Binder(this, KierunekKosztowVOModel);
+    // @state()
+    // private todos: NapZamBlockadeVO[] = [];
+    // private binder = new Binder(this, NapZamBlockadeVOModel);
 
 
     async firstUpdated() {
@@ -51,7 +54,7 @@ export class ZamBlockadeHoursView extends View {
                                    helper-text="Wybierz kierunk koszótw"
                 ></vaadin-combo-box>
                 <div>
-                    <vaadin-button theme='primary' @click=${this.createTodo } ?disabled=${this.butAdd1Disabled} >Dodaj Godziny dla Korekt (ZAM)</vaadin-button>  
+                    <vaadin-button theme='primary' @click=${this.addZamBlockade} ?disabled="${this.selectedKK !== 1}" >Dodaj Godziny dla Korekt (ZAM)</vaadin-button>  
                 </div>
                 
             
@@ -60,13 +63,22 @@ export class ZamBlockadeHoursView extends View {
     }
 
     kkChanged(e: CustomEvent) {
-        this.idKK = e.detail.value as number;
-        this.butAdd1Disabled = true;
-        Notification.show(this.idKK + "");
+        this.idKK = e.detail.value as string;
+        if (this.idKK !== "") {
+            this.selectedKK = 1;
+        }
+        //Notification.show(this.idKK + "");
     }
 
-    async createTodo() {
-
+    async addZamBlockade() {
+        const block: NapZamBlockadeVO = {};
+        block.blkId = 3;
+        block.blkKkId = Number(this.idKK);
+        block.blkType = 'ZAM';
+        // @ts-ignore
+        block.blkHours = new Date('July 1, 1999, 14:14:00').getTime();
+        block.blkTimeOfDay = 'S';
+        await NapZamBlockadeEndpoint.save(block);
     }
 
 }
