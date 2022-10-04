@@ -1,3 +1,6 @@
+CREATE SEQUENCE nap_zam_block_seq START WITH 1;
+
+
 -- auto-generated definition
 create table NAP_ZAM_BLOKADY
 (

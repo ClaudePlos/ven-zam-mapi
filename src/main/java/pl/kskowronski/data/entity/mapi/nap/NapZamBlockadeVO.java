@@ -9,6 +9,8 @@ import java.util.Date;
 public class NapZamBlockadeVO {
 
     @Id
+    @GeneratedValue(generator = "NAP_ZAM_BLOCK_SEQ")
+    @SequenceGenerator(name="NAP_ZAM_BLOCK_SEQ", sequenceName = "NAP_ZAM_BLOCK_SEQ", allocationSize=1)
     @Column(name = "BLK_ID")
     private BigDecimal blkId;
 
