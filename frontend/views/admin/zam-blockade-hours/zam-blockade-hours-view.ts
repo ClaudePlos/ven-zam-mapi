@@ -3,6 +3,8 @@ import '@vaadin/time-picker';
 import { customElement, state, query } from 'lit/decorators.js';
 import {View} from "Frontend/views/view";
 import {html} from "lit";
+import { columnBodyRenderer } from '@vaadin/grid/lit.js';
+import type { DateTimePickerValueChangedEvent } from '@vaadin/date-time-picker';
 import KierunekKosztowVO from "Frontend/generated/pl/kskowronski/data/entity/mapi/KierunekKosztowVO";
 import {KierunekKosztowEndpoint, NapZamBlockadeEndpoint} from "Frontend/generated/endpoints";
 import {appStore} from "Frontend/stores/app-store";
@@ -22,8 +24,8 @@ export class ZamBlockadeHoursView extends View {
     @state()
     private blkId: number | undefined;
 
-    @state()
-    private hhS: string | undefined = "";
+    @state() private hhS: string | undefined = "";
+    @state() private hhS2: string | undefined = "";
 
     @state()
     private selectedKK: number = 0;
@@ -70,8 +72,21 @@ export class ZamBlockadeHoursView extends View {
                 <vaadin-button theme='primary' @click=${this.addZamBlockade} ?disabled="${this.selectedKK !== 1}" >Dodaj Godziny dla Korekt (ZAM)</vaadin-button>  
             </div>
             <div>
-                <vaadin-time-picker class="time" label="Sniadanie do" value="${this.hhS}" ></vaadin-time-picker>
+                <vaadin-time-picker class="time" label="Sniadanie do" value="${this.hhS}" @value-changed="${(e: DateTimePickerValueChangedEvent) => (this.hhS = e.detail.value)}"></vaadin-time-picker>
+                <vaadin-time-picker class="time" label="Drugie Sniad do" value="${this.hhS2}" @value-changed="${(e: DateTimePickerValueChangedEvent) => (this.hhS2 = e.detail.value)}"></vaadin-time-picker>
                 <vaadin-button theme='primary' @click=${this.save}>Zapisz</vaadin-button>
+            </div>
+                
+                
+            <div>
+                <vaadin-grid .items="${this.hours}">
+                    <vaadin-grid-column header="Typ"  path="blkType"></vaadin-grid-column>
+                    <vaadin-grid-column header="Godz"  path="blkHours"></vaadin-grid-column>
+                    <vaadin-grid-column header="TimeOfDay"  path="blkTimeOfDay"></vaadin-grid-column>
+                    <vaadin-grid-column ${columnBodyRenderer<NapZamBlockadeVO>( (hour) => html`<vaadin-button theme="secondary error" 
+                                               @click="${async () => { await NapZamBlockadeEndpoint.delete(hour.blkId);  await this.getHours() }}">X</vaadin-button>`,[] )} 
+                                        header="Usuń" ></vaadin-grid-column>
+                </vaadin-grid>
             </div>
                 
          </div>
@@ -80,14 +95,24 @@ export class ZamBlockadeHoursView extends View {
 
     async kkChanged(e: CustomEvent) {
         this.idKK = e.detail.value as string;
+        this.getHours()
+        this.clearHoursInView()
+    }
+
+    async clearHoursInView() {
+        this.hhS = "00:00";
+        this.hhS2 = "00:00";
+    }
+
+    async getHours() {
         if (this.idKK !== "") {
             this.selectedKK = 1;
             const hours = await NapZamBlockadeEndpoint.getBlockadesForKK(Number(this.idKK));
             this.hours = hours;
             this.buildHours()
         }
-        //Notification.show(this.idKK + "");
     }
+
 
     async buildHours() {
         this.hours.forEach( item => {
@@ -110,13 +135,25 @@ export class ZamBlockadeHoursView extends View {
     }
 
     async save() {
-        const block: NapZamBlockadeVO = {};
-        block.blkKkId = Number(this.idKK);
-        block.blkType = 'ZAM';
+        const blockS: NapZamBlockadeVO = {};
+        blockS.blkKkId = Number(this.idKK);
+        blockS.blkType = 'ZAM';
         // @ts-ignore
-        block.blkHours = new Date('July 1, 1999, 00:00:00').getTime();
-        block.blkTimeOfDay = 'S';
-        await NapZamBlockadeEndpoint.save(block);
+        blockS.blkHours = new Date('July 1, 1999, ' + this.hhS +':00');
+        blockS.blkTimeOfDay = 'S';
+        await NapZamBlockadeEndpoint.save(blockS);
+
+        const block2S: NapZamBlockadeVO = {};
+        block2S.blkKkId = Number(this.idKK);
+        block2S.blkType = 'ZAM';
+        // @ts-ignore
+        block2S.blkHours = new Date('July 1, 1999, ' + this.hhS2 +':00');
+        block2S.blkTimeOfDay = 'S2';
+        await NapZamBlockadeEndpoint.save(block2S);
+
+        this.getHours()
     }
+
+
 
 }

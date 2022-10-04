@@ -29,4 +29,8 @@ public class NapZamBlockadeEndpoint {
         napZamBlockadeRepo.save(napZamBlockade);
     }
 
+    public void delete(BigDecimal blkId) {
+        napZamBlockadeRepo.deleteById(blkId);
+    }
+
 }
