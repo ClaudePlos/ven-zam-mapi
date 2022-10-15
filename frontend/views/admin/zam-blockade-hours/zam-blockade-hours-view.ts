@@ -12,6 +12,7 @@ import NapZamBlockadeVO from "Frontend/generated/pl/kskowronski/data/entity/mapi
 import {Notification} from "@vaadin/notification";
 import {Binder} from "@hilla/form";
 import NapZamBlockadeVOModel from "Frontend/generated/pl/kskowronski/data/entity/mapi/nap/NapZamBlockadeVOModel";
+import type { GridColumnBodyLitRenderer } from '@vaadin/grid/lit.js';
 
 
 
@@ -23,9 +24,6 @@ export class ZamBlockadeHoursView extends View {
 
     @state()
     private blkId: number | undefined;
-
-    @state() private hhS: string | undefined = "";
-    @state() private hhS2: string | undefined = "";
 
     @state()
     private selectedKK: number = 0;
@@ -69,20 +67,16 @@ export class ZamBlockadeHoursView extends View {
                                    helper-text="Wybierz kierunk koszótw"
                 ></vaadin-combo-box>
             <div>
-                <vaadin-button theme='primary' @click=${this.addZamBlockade} ?disabled="${this.selectedKK !== 1}" >Dodaj Godziny dla Korekt (ZAM)</vaadin-button>  
-            </div>
-            <div>
-                <vaadin-time-picker class="time" label="Sniadanie do" value="${this.hhS}" @value-changed="${(e: DateTimePickerValueChangedEvent) => (this.hhS = e.detail.value)}"></vaadin-time-picker>
-                <vaadin-time-picker class="time" label="Drugie Sniad do" value="${this.hhS2}" @value-changed="${(e: DateTimePickerValueChangedEvent) => (this.hhS2 = e.detail.value)}"></vaadin-time-picker>
-                <vaadin-button theme='primary' @click=${this.save}>Zapisz</vaadin-button>
+                <vaadin-button theme='primary' @click=${this.add} ?disabled="${this.selectedKK !== 1}">Dodaj Godz. Korekt (ZAM)</vaadin-button>
+                <vaadin-button theme='primary' @click=${this.saveAll}>Zapisz</vaadin-button>
             </div>
                 
                 
             <div>
                 <vaadin-grid .items="${this.hours}">
                     <vaadin-grid-column header="Typ"  path="blkType"></vaadin-grid-column>
-                    <vaadin-grid-column header="Godz"  path="blkHours"></vaadin-grid-column>
-                    <vaadin-grid-column header="TimeOfDay"  path="blkTimeOfDay"></vaadin-grid-column>
+                    <vaadin-grid-column header="Godz"  flex-grow="0" auto-width ${columnBodyRenderer(this.timeRenderer, [])}></vaadin-grid-column>
+                    <vaadin-grid-column header="TimeOfDay" path="blkTimeOfDay"></vaadin-grid-column>
                     <vaadin-grid-column ${columnBodyRenderer<NapZamBlockadeVO>( (hour) => html`<vaadin-button theme="secondary error" 
                                                @click="${async () => { await NapZamBlockadeEndpoint.delete(hour.blkId);  await this.getHours() }}">X</vaadin-button>`,[] )} 
                                         header="Usuń" ></vaadin-grid-column>
@@ -93,65 +87,69 @@ export class ZamBlockadeHoursView extends View {
         `;
     }
 
+    private timeRenderer: GridColumnBodyLitRenderer<NapZamBlockadeVO> = (block) => html`
+        <vaadin-time-picker class="time" value="${block.blkHours}"
+              @value-changed="${(e: DateTimePickerValueChangedEvent) => (block.blkHours = e.detail.value)}"
+        ></vaadin-time-picker>
+  `;
+
     async kkChanged(e: CustomEvent) {
         this.idKK = e.detail.value as string;
         this.getHours()
-        this.clearHoursInView()
-    }
-
-    async clearHoursInView() {
-        this.hhS = "00:00";
-        this.hhS2 = "00:00";
     }
 
     async getHours() {
         if (this.idKK !== "") {
-            this.selectedKK = 1;
             const hours = await NapZamBlockadeEndpoint.getBlockadesForKK(Number(this.idKK));
             this.hours = hours;
-            this.buildHours()
+            if (this.hours.length === 0) {
+                this.selectedKK = 1;
+            } else {
+                this.selectedKK = 0;
+            }
         }
     }
 
 
-    async buildHours() {
-        this.hours.forEach( item => {
-            Notification.show(item.blkHours + " " + item.blkTimeOfDay);
-            if (item.blkTimeOfDay === "S") {
-                //binS = item;
-                this.hhS = item.blkHours;
-            }
-        })
+    // async buildHours() {
+    //     this.hours.forEach( item => {
+    //         Notification.show(item.blkHours + " " + item.blkTimeOfDay);
+    //     })
+    // }
+
+    async add() {
+        this.save('S','00:00');
+        this.save('2S','00:00');
+        this.save('O','00:00');
+        this.save('P','00:00');
+        this.save('K','00:00');
+        this.save('PN','00:00');
+        this.getHours()
     }
 
-    async addZamBlockade() {
+    async save( timeOfDay : string, hhSS : string) {
         const block: NapZamBlockadeVO = {};
         block.blkKkId = Number(this.idKK);
         block.blkType = 'ZAM';
         // @ts-ignore
-        block.blkHours = new Date('July 1, 1999, 00:00:00').getTime();
-        block.blkTimeOfDay = 'S';
+        block.blkHours = new Date('July 1, 1999, ' + hhSS +':00');
+        block.blkTimeOfDay = timeOfDay;
         await NapZamBlockadeEndpoint.save(block);
     }
 
-    async save() {
-        const blockS: NapZamBlockadeVO = {};
-        blockS.blkKkId = Number(this.idKK);
-        blockS.blkType = 'ZAM';
-        // @ts-ignore
-        blockS.blkHours = new Date('July 1, 1999, ' + this.hhS +':00');
-        blockS.blkTimeOfDay = 'S';
-        await NapZamBlockadeEndpoint.save(blockS);
-
-        const block2S: NapZamBlockadeVO = {};
-        block2S.blkKkId = Number(this.idKK);
-        block2S.blkType = 'ZAM';
-        // @ts-ignore
-        block2S.blkHours = new Date('July 1, 1999, ' + this.hhS2 +':00');
-        block2S.blkTimeOfDay = 'S2';
-        await NapZamBlockadeEndpoint.save(block2S);
-
-        this.getHours()
+    async saveAll() {
+        this.hours.forEach( item => {
+            // @ts-ignore
+            console.log(item.blkHours.toString());
+             // @ts-ignore
+            if (!item.blkHours.toString().includes('Jul')) {
+                 // @ts-ignore
+                 item.blkHours = new Date('July 1, 1999, ' + item.blkHours);
+             }
+             NapZamBlockadeEndpoint.save(item);
+        })
+        const notification = Notification.show('Zapisano', {position: 'middle',});
+        notification.setAttribute('theme', 'success');
     }
 
 
