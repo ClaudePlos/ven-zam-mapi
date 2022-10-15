@@ -118,22 +118,23 @@ export class ZamBlockadeHoursView extends View {
     // }
 
     async add() {
-        this.save('S','00:00');
-        this.save('2S','00:00');
-        this.save('O','00:00');
-        this.save('P','00:00');
-        this.save('K','00:00');
-        this.save('PN','00:00');
+        this.save('S','00:00', 1);
+        this.save('2S','00:00', 2);
+        this.save('O','00:00', 3);
+        this.save('P','00:00', 4);
+        this.save('K','00:00', 5);
+        this.save('PN','00:00', 6);
         this.getHours()
     }
 
-    async save( timeOfDay : string, hhSS : string) {
+    async save( timeOfDay : string, hhSS : string, lp : number) {
         const block: NapZamBlockadeVO = {};
         block.blkKkId = Number(this.idKK);
         block.blkType = 'ZAM';
         // @ts-ignore
         block.blkHours = new Date('July 1, 1999, ' + hhSS +':00');
         block.blkTimeOfDay = timeOfDay;
+        block.blkLp = lp;
         await NapZamBlockadeEndpoint.save(block);
     }
 

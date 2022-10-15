@@ -27,6 +27,9 @@ public class NapZamBlockadeVO {
     @Column(name = "BLK_PORA_DNIA")
     private String blkTimeOfDay;
 
+    @Column(name = "BLK_LP")
+    private BigDecimal blkLp;
+
     public BigDecimal getBlkId() {
         return blkId;
     }
@@ -65,5 +68,13 @@ public class NapZamBlockadeVO {
 
     public void setBlkTimeOfDay(String blkTimeOfDay) {
         this.blkTimeOfDay = blkTimeOfDay;
+    }
+
+    public BigDecimal getBlkLp() {
+        return blkLp;
+    }
+
+    public void setBlkLp(BigDecimal blkLp) {
+        this.blkLp = blkLp;
     }
 }
