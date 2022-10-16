@@ -30,6 +30,9 @@ public class NapZamBlockadeVO {
     @Column(name = "BLK_LP")
     private BigDecimal blkLp;
 
+    @Column(name = "BLK_RAMY_CZASOWE")
+    private String blkRamyCzasowe;
+
     public BigDecimal getBlkId() {
         return blkId;
     }
@@ -76,5 +79,13 @@ public class NapZamBlockadeVO {
 
     public void setBlkLp(BigDecimal blkLp) {
         this.blkLp = blkLp;
+    }
+
+    public String getBlkRamyCzasowe() {
+        return blkRamyCzasowe;
+    }
+
+    public void setBlkRamyCzasowe(String blkRamyCzasowe) {
+        this.blkRamyCzasowe = blkRamyCzasowe;
     }
 }

@@ -32,7 +32,7 @@ export class ZamBlockadeHoursView extends View {
     private kkList: KierunekKosztowVO[] = [];
 
     @state()
-    private hours: NapZamBlockadeVO[] = [];
+    private blockHours: NapZamBlockadeVO[] = [];
 
     private binS = new Binder(this, NapZamBlockadeVOModel);
 
@@ -55,6 +55,9 @@ export class ZamBlockadeHoursView extends View {
                 .time {
                     width: 100px;
                 }
+                .grid-block-hours {
+                    height: 800px;
+                }
             </style>
             <div class="zam-blockade-hours-view">
                 <vaadin-combo-box  class="combo-kk" label="Kierunek kosztów" 
@@ -73,9 +76,10 @@ export class ZamBlockadeHoursView extends View {
                 
                 
             <div>
-                <vaadin-grid .items="${this.hours}">
+                <vaadin-grid class="grid-block-hours" .items="${this.blockHours}">
                     <vaadin-grid-column header="Typ"  path="blkType"></vaadin-grid-column>
                     <vaadin-grid-column header="Godz"  flex-grow="0" auto-width ${columnBodyRenderer(this.timeRenderer, [])}></vaadin-grid-column>
+                    <vaadin-grid-column header="Ramy Czasowe" path="blkRamyCzasowe"></vaadin-grid-column>
                     <vaadin-grid-column header="TimeOfDay" path="blkTimeOfDay"></vaadin-grid-column>
                     <vaadin-grid-column ${columnBodyRenderer<NapZamBlockadeVO>( (hour) => html`<vaadin-button theme="secondary error" 
                                                @click="${async () => { await NapZamBlockadeEndpoint.delete(hour.blkId);  await this.getHours() }}">X</vaadin-button>`,[] )} 
@@ -101,8 +105,8 @@ export class ZamBlockadeHoursView extends View {
     async getHours() {
         if (this.idKK !== "") {
             const hours = await NapZamBlockadeEndpoint.getBlockadesForKK(Number(this.idKK));
-            this.hours = hours;
-            if (this.hours.length === 0) {
+            this.blockHours = hours;
+            if (this.blockHours.length === 0) {
                 this.selectedKK = 1;
             } else {
                 this.selectedKK = 0;
@@ -118,16 +122,22 @@ export class ZamBlockadeHoursView extends View {
     // }
 
     async add() {
-        await this.save('S','00:00', 1)
-        await this.save('2S','00:00', 2)
-        await this.save('O','00:00', 3)
-        await this.save('P','00:00', 4)
-        await this.save('K','00:00', 5)
-        await this.save('PN','00:00', 6)
+        await this.save('S','06:00', 1, 'D')
+        await this.save('2S','08:00',2, 'D')
+        await this.save('O','10:00', 3, 'D')
+        await this.save('P','12:00', 4, 'D')
+        await this.save('K','14:00', 5, 'D')
+        await this.save('PN','16:00',6, 'D')
+        await this.save('S','06:00', 1, 'W')
+        await this.save('2S','08:00',2, 'W')
+        await this.save('O','10:00', 3, 'W')
+        await this.save('P','12:00', 4, 'W')
+        await this.save('K','14:00', 5, 'W')
+        await this.save('PN','16:00',6, 'W')
         await this.getHours()
     }
 
-    async save( timeOfDay : string, hhSS : string, lp : number) {
+    async save( timeOfDay : string, hhSS : string, lp : number, timeframe : string) {
         const block: NapZamBlockadeVO = {};
         block.blkKkId = Number(this.idKK);
         block.blkType = 'ZAM';
@@ -135,11 +145,12 @@ export class ZamBlockadeHoursView extends View {
         block.blkHours = new Date('July 1, 1999, ' + hhSS +':00');
         block.blkTimeOfDay = timeOfDay;
         block.blkLp = lp;
+        block.blkRamyCzasowe = timeframe;
         await NapZamBlockadeEndpoint.save(block);
     }
 
     async saveAll() {
-        this.hours.forEach( item => {
+        this.blockHours.forEach( item => {
             // @ts-ignore
             console.log(item.blkHours.toString());
              // @ts-ignore

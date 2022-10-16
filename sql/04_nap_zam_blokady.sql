@@ -9,7 +9,8 @@ create table NAP_ZAM_BLOKADY
     BLK_RODZAJ    VARCHAR2(100) not null,
     BLK_GODZ      DATE          not null,
     BLK_PORA_DNIA VARCHAR2(100),
-    BLK_LP     NUMBER        not null
+    BLK_LP     NUMBER        not null,
+    BLK_RAMY_CZASOWE    VARCHAR2(1) not null
 )
 /
 

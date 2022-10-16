@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface NapZamBlockadeRepo extends JpaRepository<NapZamBlockadeVO, BigDecimal> {
 
-    @Query("select b from NapZamBlockadeVO b where b.blkKkId = :idKK order by b.blkLp")
+    @Query("select b from NapZamBlockadeVO b where b.blkKkId = :idKK order by b.blkRamyCzasowe, b.blkLp")
     List<NapZamBlockadeVO> getBlockadesForKK(@Param("idKK") BigDecimal idKK);
 
 }

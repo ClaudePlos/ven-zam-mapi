@@ -5,17 +5,30 @@ import '@vaadin/grid/vaadin-grid-column-group.js';
 import './components/claude-date';
 import '@vaadin/number-field';
 import '@vaadin/integer-field';
+import '@vaadin/vaadin-lumo-styles/vaadin-iconset';
+import '@vaadin/notification';
+import '@vaadin/horizontal-layout';
+import '@vaadin/icon';
+
 
 import { html, render } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import {Notification} from "@vaadin/notification";
+import type { NotificationOpenedChangedEvent } from '@vaadin/notification';
+import { notificationRenderer } from '@vaadin/notification/lit.js';
+import type { NotificationLitRenderer } from '@vaadin/notification/lit.js';
 import { View } from '../../views/view';
-import { Binder, field } from '@hilla/form';
+import { Binder } from '@hilla/form';
 import { GridItemModel } from '@vaadin/grid';
 import { feedViewStore } from './feed-view-store';
 import KierunekKosztowVO from "Frontend/generated/pl/kskowronski/data/entity/mapi/KierunekKosztowVO";
 // @ts-ignore
-import {GrupaZywionychEndpoint, KierunekKosztowEndpoint, StanyZywionychEndpoint} from "Frontend/generated/endpoints";
+import {
+    GrupaZywionychEndpoint,
+    KierunekKosztowEndpoint,
+    NapZamBlockadeEndpoint,
+    StanyZywionychEndpoint
+} from "Frontend/generated/endpoints";
 import GrupaZywionychVO from "Frontend/generated/pl/kskowronski/data/entity/mapi/GrupaZywionychVO";
 import StanZywionychNaDzienDTO from "Frontend/generated/pl/kskowronski/data/entity/mapi/StanZywionychNaDzienDTO";
 
@@ -24,6 +37,7 @@ import StanZywionychNaDzienDTOModel
     from "Frontend/generated/pl/kskowronski/data/entity/mapi/StanZywionychNaDzienDTOModel";
 //import '@vaadin/vaadin-lumo-styles/utility.js';
 import { appStore } from '../../stores/app-store';
+import NapZamBlockadeVO from "Frontend/generated/pl/kskowronski/data/entity/mapi/nap/NapZamBlockadeVO";
 
 @customElement('feed-view')
 export class FeedView extends View {
@@ -37,11 +51,25 @@ export class FeedView extends View {
     private kkList: KierunekKosztowVO[] = [];
 
     @state()
+    private blockHours: NapZamBlockadeVO[] = [];
+
+    @state()
     private gzList: GrupaZywionychVO[] = [];
 
     @state()
     private stanyZywionychNaDzien: StanZywionychNaDzienDTO[] = [];
     private binder = new Binder(this, StanZywionychNaDzienDTOModel);
+
+    @state()
+    private notificationOpened = false;
+
+    @state()
+    private textBlockadeHours : string = " ";
+
+    @state()
+    private textOpenHours : string = " test";
+
+
 
     async firstUpdated() {
         const kkList = await KierunekKosztowEndpoint.findAllUserKK(appStore.user?.id);
@@ -73,6 +101,16 @@ export class FeedView extends View {
                                    helper-text="Wybierz grupę żywionych"
                 ></vaadin-combo-box>
                 <vaadin-button theme="secondary" @click=${this.save}>Zapisz</vaadin-button>
+                <vaadin-button theme="secondary error icon" @click="${() => (this.notificationOpened = true)}" .disabled="${this.notificationOpened}">i</vaadin-button>
+                <vaadin-notification
+                        duration="0"
+                        position="top-stretch"
+                        .opened="${this.notificationOpened}"
+                        @opened-changed="${(e: NotificationOpenedChangedEvent) => {
+                            this.notificationOpened = e.detail.value;
+                        }}"
+                        ${notificationRenderer(this.renderer, [])}
+                ></vaadin-notification>
             </div>
             <vaadin-grid .items="${this.stanyZywionychNaDzien}" style="width: 99%; height: 88%" theme="column-borders">
 
@@ -124,11 +162,16 @@ export class FeedView extends View {
                value="${model.item.obiadPlanIl as number}" style="width: 110px"></vaadin-integer-field>`, root) : render(html``,root);
     }
 
-    // private valueRenderer = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-    //     render(html` <input type="number" id="fname" name="fname" value="${model.item.sniadaniePlanIl}"
-    //                         onChange="${this.handleChange}"
-    //             style="border: none;width: 50px;font-size: 16px"></input>`, root);
-    // };
+    renderer: NotificationLitRenderer = () => {
+        return html`
+      <vaadin-horizontal-layout theme="spacing" style="align-items: center;">
+        <div>Plan/Korekta:<p style="color:red"> Godz zablokowane:${this.textBlockadeHours}</p> Godz otwarte:${this.textOpenHours}</div>
+        <vaadin-button theme="tertiary-inline" @click="${this.close}" aria-label="Close">
+          <vaadin-icon icon="lumo:cross"></vaadin-icon>
+        </vaadin-button>
+      </vaadin-horizontal-layout>
+    `;
+    };
 
     updateState( item: StanZywionychNaDzienDTO, value: number, type: string){
         if (type === "s") {
@@ -155,9 +198,14 @@ export class FeedView extends View {
         Notification.show("zmienione");
     }
 
-    kkChanged(e: CustomEvent) {
+    async kkChanged(e: CustomEvent) {
         this.idKK = e.detail.value as number;
         this.getGzList();
+        const blockHours = await NapZamBlockadeEndpoint.getBlockadesForKK(this.idKK)
+        this.blockHours = blockHours;
+        this.blockHours.forEach( item => {
+            this.textBlockadeHours += item.blkTimeOfDay + "(" + item.blkRamyCzasowe + "):" + item.blkHours?.substring(0,5) + " "
+        })
     }
 
     async getGzList() {
@@ -193,5 +241,9 @@ export class FeedView extends View {
             'p-l',
             'box-border'
         );
+    }
+
+    private close() {
+        this.notificationOpened = false;
     }
 }
