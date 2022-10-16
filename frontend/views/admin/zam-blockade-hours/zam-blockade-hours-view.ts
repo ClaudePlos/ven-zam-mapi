@@ -118,13 +118,13 @@ export class ZamBlockadeHoursView extends View {
     // }
 
     async add() {
-        this.save('S','00:00', 1);
-        this.save('2S','00:00', 2);
-        this.save('O','00:00', 3);
-        this.save('P','00:00', 4);
-        this.save('K','00:00', 5);
-        this.save('PN','00:00', 6);
-        this.getHours()
+        await this.save('S','00:00', 1)
+        await this.save('2S','00:00', 2)
+        await this.save('O','00:00', 3)
+        await this.save('P','00:00', 4)
+        await this.save('K','00:00', 5)
+        await this.save('PN','00:00', 6)
+        await this.getHours()
     }
 
     async save( timeOfDay : string, hhSS : string, lp : number) {
