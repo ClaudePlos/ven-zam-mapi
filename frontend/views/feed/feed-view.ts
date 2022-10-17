@@ -69,6 +69,12 @@ export class FeedView extends View {
     @state()
     private textOpenHours : string = " test";
 
+    @state() private sBlock = false;
+    @state() private s2Block = false;
+    @state() private oBlock = false;
+    @state() private pBlock = false;
+    @state() private kBlock = false;
+    @state() private pnBlock = false;
 
 
     async firstUpdated() {
@@ -80,7 +86,8 @@ export class FeedView extends View {
 
         const { model } = this.binder;
 
-        return html`<div style="width: 99%; height: 100%; padding-left: 5px">
+        return html`
+            <div style="width: 99%; height: 100%; padding-left: 5px">
             <div><claude-date></claude-date>
                 <vaadin-combo-box  label="Kierunek kosztów"
                                    .items="${this.kkList}"
@@ -122,45 +129,115 @@ export class FeedView extends View {
                 <vaadin-grid-column header="Ś"   .renderer="${this.valueRendererS}" width="145px"></vaadin-grid-column>
                 <vaadin-grid-column header="IIŚ" .renderer="${this.valueRendererIIS}" width="145px"></vaadin-grid-column>
                 <vaadin-grid-column header="O"   .renderer="${this.valueRendererO}" width="145px"></vaadin-grid-column>
-                <vaadin-grid-column path="podwieczorekPlanIl"></vaadin-grid-column>
-                <vaadin-grid-column path="kolacjaPlanIl"></vaadin-grid-column>
-                <vaadin-grid-column path="posilekNocnyPlanIl"></vaadin-grid-column>
-                <vaadin-grid-column path="szUwagi"></vaadin-grid-column>
+                <vaadin-grid-column header="P"   .renderer="${this.valueRendererP}" width="145px"></vaadin-grid-column>
+                <vaadin-grid-column header="K"   .renderer="${this.valueRendererK}" width="145px"></vaadin-grid-column>
+                <vaadin-grid-column header="PN"  .renderer="${this.valueRendererPN}" width="145px"></vaadin-grid-column>
+                <vaadin-grid-column header="Uwagi" path="uwagi"></vaadin-grid-column>
                 </vaadin-grid-column-group>
                 
 
-                <vaadin-grid-column-group header="Korekta">
-                <vaadin-grid-column path="sniadanieKorIl"></vaadin-grid-column>
-                <vaadin-grid-column path="drugieSniadanieKorIl"></vaadin-grid-column>
-                <vaadin-grid-column path="obiadKorIl"></vaadin-grid-column>
-                <vaadin-grid-column path="podwieczorekKorIl"></vaadin-grid-column>
-                <vaadin-grid-column path="kolacjaKorIl"></vaadin-grid-column>
-                <vaadin-grid-column path="posilekNocnyKorIl"></vaadin-grid-column>
+                <vaadin-grid-column-group class="gridCorrection" header="Korekta">
+                <vaadin-grid-column header="Ś"   .renderer="${this.valueRendererS_kor}" width="145px"></vaadin-grid-column>
+                <vaadin-grid-column header="IIŚ" .renderer="${this.valueRendererIIS_kor}" width="145px"></vaadin-grid-column>
+                <vaadin-grid-column header="O"   .renderer="${this.valueRendererO_kor}" width="145px"></vaadin-grid-column>
+                <vaadin-grid-column header="P"   .renderer="${this.valueRendererP_kor}" width="145px"></vaadin-grid-column>
+                <vaadin-grid-column header="K"   .renderer="${this.valueRendererK_kor}" width="145px"></vaadin-grid-column>
+                <vaadin-grid-column header="PN"  .renderer="${this.valueRendererPN_kor}" width="145px"></vaadin-grid-column>
                 </vaadin-grid-column-group>
             </vaadin-grid>
     </div>`;
     }
 
+    // plan
+
     private valueRendererS = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        model.item.sniadaniePlanIl !== undefined ? render(html` <vaadin-integer-field class="firld-plan"
+        model.item.sniadaniePlanIl !== undefined ? render(html` <vaadin-integer-field class="firld-plan" disabled="${this.sBlock}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "s")} 
                          @click=${(e: CustomEvent) => this.updateClickState(model.item)}                                                                        
                value="${model.item.sniadaniePlanIl as number}" style="width: 110px"></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererIIS = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        model.item.drugieSniadaniePlanIl !== undefined ? render(html` <vaadin-integer-field class="field-kor"
+        model.item.drugieSniadaniePlanIl !== undefined ? render(html` <vaadin-integer-field class="field-plan" disabled="${this.s2Block}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "2s")}
                          @click=${(e: CustomEvent) => this.updateClickState(model.item)}                                                                      
                value="${model.item.drugieSniadaniePlanIl as number}" style="width: 110px"></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererO = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        model.item.obiadPlanIl !== undefined ? render(html` <vaadin-integer-field class="field-plan"
+        model.item.obiadPlanIl !== undefined ? render(html` <vaadin-integer-field class="field-plan" disabled="${this.oBlock}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "o")}
                          @click=${(e: CustomEvent) => this.updateClickState(model.item)}
                value="${model.item.obiadPlanIl as number}" style="width: 110px"></vaadin-integer-field>`, root) : render(html``,root);
     }
+
+    private valueRendererP = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
+        model.item.podwieczorekPlanIl !== undefined ? render(html` <vaadin-integer-field class="field-plan" disabled="${this.pBlock}"
+            has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "o")}
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}
+               value="${model.item.podwieczorekPlanIl as number}" style="width: 110px"></vaadin-integer-field>`, root) : render(html``,root);
+    }
+
+    private valueRendererK = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
+        model.item.kolacjaPlanIl !== undefined ? render(html` <vaadin-integer-field class="field-plan" disabled="${this.kBlock}"
+            has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "o")}
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}
+               value="${model.item.kolacjaPlanIl as number}" style="width: 110px"></vaadin-integer-field>`, root) : render(html``,root);
+    }
+
+    private valueRendererPN = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
+        model.item.posilekNocnyPlanIl !== undefined ? render(html` <vaadin-integer-field class="field-plan" disabled="${this.pnBlock}"
+            has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "o")}
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}
+               value="${model.item.posilekNocnyPlanIl as number}" style="width: 110px"></vaadin-integer-field>`, root) : render(html``,root);
+    }
+
+    // kor
+
+    private valueRendererS_kor = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
+        model.item.sniadanieKorIl !== undefined ? render(html` <vaadin-integer-field class="field-kor" disabled="${this.sBlock}"
+            has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "s")} 
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}                                                                        
+               value="${model.item.sniadanieKorIl as number}" style="width: 110px"></vaadin-integer-field>`, root) : render(html``,root);
+    }
+
+    private valueRendererIIS_kor = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
+        model.item.drugieSniadanieKorIl !== undefined ? render(html` <vaadin-integer-field class="field-kor" disabled="${this.s2Block}"
+            has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "2s")}
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}                                                                      
+               value="${model.item.drugieSniadanieKorIl as number}" style="width: 110px"></vaadin-integer-field>`, root) : render(html``,root);
+    }
+
+    private valueRendererO_kor = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
+        model.item.obiadKorIl !== undefined ? render(html` <vaadin-integer-field class="field-kor" disabled="${this.oBlock}"
+            has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "o")}
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}
+               value="${model.item.obiadKorIl as number}" style="width: 110px"></vaadin-integer-field>`, root) : render(html``,root);
+    }
+
+    private valueRendererP_kor = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
+        model.item.podwieczorekKorIl !== undefined ? render(html` <vaadin-integer-field class="field-kor" disabled="${this.pBlock}"
+            has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "o")}
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}
+               value="${model.item.podwieczorekKorIl as number}" style="width: 110px"></vaadin-integer-field>`, root) : render(html``,root);
+    }
+
+    private valueRendererK_kor = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
+        model.item.kolacjaKorIl !== undefined ? render(html` <vaadin-integer-field class="field-kor" disabled="${this.kBlock}"
+            has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "o")}
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}
+               value="${model.item.kolacjaKorIl as number}" style="width: 110px"></vaadin-integer-field>`, root) : render(html``,root);
+    }
+
+    private valueRendererPN_kor = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
+        model.item.posilekNocnyKorIl !== undefined ? render(html` <vaadin-integer-field class="field-kor" disabled="${this.pnBlock}"
+            has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "o")}
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}
+               value="${model.item.posilekNocnyKorIl as number}" style="width: 110px"></vaadin-integer-field>`, root) : render(html``,root);
+    }
+
+
+
 
     renderer: NotificationLitRenderer = () => {
         return html`
