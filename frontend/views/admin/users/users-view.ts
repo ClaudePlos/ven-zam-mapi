@@ -1,8 +1,6 @@
 import '@vaadin/button';
 import '@vaadin/notification';
 import '@vaadin/text-field';
-import '@vaadin/crud';
-import type { Crud } from '@vaadin/crud';
 import '@vaadin/text-field';
 import { html } from 'lit';
 import { customElement, state, query } from 'lit/decorators.js';
@@ -17,8 +15,6 @@ import {kkUserViewStore} from "Frontend/views/admin/users/kk-user/kk-user-view-s
 @customElement('users-view')
 export class UsersView extends View {
 
-    @query('vaadin-crud')
-    private crud!: Crud<Partial<User>>;
 
     async firstUpdated() {
         const users = await UserEndpoint.findAll();

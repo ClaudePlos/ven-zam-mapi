@@ -11,6 +11,7 @@ import '@vaadin/horizontal-layout';
 import '@vaadin/icon';
 import '@vaadin/checkbox';
 
+import dateFnsFormat from 'date-fns/format';
 
 import { html, render } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
@@ -39,6 +40,7 @@ import StanZywionychNaDzienDTOModel
 //import '@vaadin/vaadin-lumo-styles/utility.js';
 import { appStore } from '../../stores/app-store';
 import NapZamBlockadeVO from "Frontend/generated/pl/kskowronski/data/entity/mapi/nap/NapZamBlockadeVO";
+import dateFnsParse from "date-fns/parse";
 
 @customElement('feed-view')
 export class FeedView extends View {
@@ -73,19 +75,19 @@ export class FeedView extends View {
     @state()
     private textOpenHours : string = " test";
 
-    @state() private sBlock = false;
-    @state() private s2Block = false;
-    @state() private oBlock = false;
-    @state() private pBlock = false;
-    @state() private kBlock = false;
-    @state() private pnBlock = false;
+    @state() private sBlock : boolean = false;
+    @state() private s2Block : boolean = false;
+    @state() private oBlock : boolean = false;
+    @state() private pBlock : boolean = false;
+    @state() private kBlock : boolean = false;
+    @state() private pnBlock : boolean = false;
 
-    @state() private sBlock_kor = false;
-    @state() private s2Block_kor = false;
-    @state() private oBlock_kor = false;
-    @state() private pBlock_kor = false;
-    @state() private kBlock_kor = false;
-    @state() private pnBlock_kor = false;
+    @state() private sBlock_kor : boolean = false;
+    @state() private s2Block_kor : boolean = false;
+    @state() private oBlock_kor : boolean = false;
+    @state() private pBlock_kor : boolean = false;
+    @state() private kBlock_kor : boolean = false;
+    @state() private pnBlock_kor : boolean = false;
 
 
     async firstUpdated() {
@@ -315,9 +317,41 @@ export class FeedView extends View {
         this.getGzList();
         const blockHours = await NapZamBlockadeEndpoint.getBlockadesForKK(this.idKK)
         this.blockHours = blockHours;
-        this.blockHours.forEach( item => {
-            this.textBlockadeHours += item.blkTimeOfDay + "(" + item.blkRamyCzasowe + "):" + item.blkHours?.substring(0,5) + " "
-        })
+
+        // if ( dateFnsParse(feedViewStore.startDate, 'yyyy-MM-dd', new Date()) < new Date() ) {
+        //     this.sBlock = true; this.s2Block = true; this.oBlock = true; this.pBlock = true; this.kBlock = true; this.pnBlock = true;
+        //     this.sBlock_kor = true; this.s2Block_kor = true; this.oBlock_kor = true; this.pBlock_kor = true; this.kBlock_kor = true; this.pnBlock_kor = true;
+        //     this.textBlockadeHours = "Zmiany zablokowane, wybrany dzień starszy niż dziś"
+        //     return;
+        // } else {
+            this.blockHours.forEach( item => {
+                this.checkBlockadeEditHours( item.blkTimeOfDay, item.blkRamyCzasowe, item.blkHours);
+                this.textBlockadeHours += item.blkTimeOfDay + "(" + item.blkRamyCzasowe + "):" + item.blkHours?.substring(0,5) + " "
+            })
+        //}
+
+    }
+
+    // item.blkHours S, 2S, O, P, K, PN
+    // blkRamyCzasowe W, D wczoraj, dzis
+    // blkHours 00:00:00
+    async checkBlockadeEditHours(blkTimeOfDay: string | undefined, blkRamyCzasowe: string | undefined, blkHours: string | undefined) {
+        const rodzaj : string =  "PODSTAWOWE";
+        let d1 = new Date();
+        const d1_tommorow = new Date();
+        d1_tommorow.setDate(d1_tommorow.getDate() + 1)
+
+
+
+        if ( rodzaj === "PODSTAWOWE" ) {
+            // daty równe dziś i oznaczona na stronie, sprawdzamy do któreh godz można wprowadzać zamówienia
+            if ( dateFnsFormat(d1.getDate(),'yyyy-MM-dd') === feedViewStore.startDate ) {
+                // nie mozna planowac na dzis, tylko na jutro
+                this.sBlock = true;
+                this.s2Block = true;
+            }
+
+        }
     }
 
     async getGzList() {
