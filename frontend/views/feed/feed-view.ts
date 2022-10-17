@@ -43,8 +43,6 @@ import NapZamBlockadeVO from "Frontend/generated/pl/kskowronski/data/entity/mapi
 export class FeedView extends View {
 
     idKK: number = 0;
-    idGZ: number = 0;
-    sortType: string = "lp";
     czyKorekta: string = "N";
 
     @state()
@@ -56,8 +54,7 @@ export class FeedView extends View {
     @state()
     private gzList: GrupaZywionychVO[] = [];
 
-    @state()
-    private stanyZywionychNaDzien: StanZywionychNaDzienDTO[] = [];
+
     private binder = new Binder(this, StanZywionychNaDzienDTOModel);
 
     @state()
@@ -119,7 +116,7 @@ export class FeedView extends View {
                         ${notificationRenderer(this.renderer, [])}
                 ></vaadin-notification>
             </div>
-            <vaadin-grid .items="${this.stanyZywionychNaDzien}" style="width: 99%; height: 88%" theme="column-borders">
+            <vaadin-grid .items="${feedViewStore.stanyZywionychNaDzien}" style="width: 99%; height: 88%" theme="column-borders">
 
                 <vaadin-grid-column path="lp" width="60px"></vaadin-grid-column>
                 <vaadin-grid-column path="dietaNazwa" width="300px"></vaadin-grid-column>
@@ -146,6 +143,11 @@ export class FeedView extends View {
                 </vaadin-grid-column-group>
             </vaadin-grid>
     </div>`;
+    }
+
+    gzChanged(e: CustomEvent) {
+        feedViewStore.idGZ = e.detail.value as number;
+        feedViewStore.getStanyZywionychNaDzien();
     }
 
     // plan
@@ -290,21 +292,12 @@ export class FeedView extends View {
         this.gzList = gzList;
     }
 
-    gzChanged(e: CustomEvent) {
-        this.idGZ = e.detail.value as number;
-        this.getStanyZywionychNaDzien();
-    }
-
-    async getStanyZywionychNaDzien() {
-        const stanyZywionychNaDzien = await StanyZywionychEndpoint.pobierzStanZywionychWdniuDlaGZ(feedViewStore.startDate, this.idGZ, this.sortType);
-        this.stanyZywionychNaDzien = stanyZywionychNaDzien;
-    }
 
     async save() {
-        const ret = await StanyZywionychEndpoint.zapiszStanZyw(feedViewStore.startDate, this.idGZ, this.sortType, this.idKK, this.czyKorekta
-            , appStore.user?.operatorId,  this.stanyZywionychNaDzien.filter((obj) => { return obj.dataChanged === true }));
+        const ret = await StanyZywionychEndpoint.zapiszStanZyw(feedViewStore.startDate, feedViewStore.idGZ, feedViewStore.sortType, this.idKK, this.czyKorekta
+            , appStore.user?.operatorId,  feedViewStore.stanyZywionychNaDzien.filter((obj) => { return obj.dataChanged === true }));
         Notification.show(ret);
-        this.stanyZywionychNaDzien.filter((obj) => { return obj.dataChanged === true }).forEach((stanZ) =>{
+        feedViewStore.stanyZywionychNaDzien.filter((obj) => { return obj.dataChanged === true }).forEach((stanZ) =>{
             stanZ.dataChanged = false;
         })
     }

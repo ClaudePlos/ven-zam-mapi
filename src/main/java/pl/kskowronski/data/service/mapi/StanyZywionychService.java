@@ -200,7 +200,7 @@ public class StanyZywionychService {
                     connection -> {
                         try (CallableStatement function = connection
                                 .prepareCall(
-                                        "{ ? = call nap_hl7_tools.AKTUALIZUJ_STANY_ZYWIONYCH3(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) }" )) {
+                                        "{ ? = call nap_hl7_tools.AKTUALIZUJ_STANY_ZYWIONYCH3(?,?,?,?) }" )) {
                             function.registerOutParameter( 1, Types.INTEGER );
                             function.setBigDecimal( 2, idKK);
                             function.setBigDecimal( 3, idGrupaZywionch );
