@@ -52,12 +52,12 @@
 
 .menu-item-icon {
   margin-inline-end: var(--lumo-space-s);
-  font-size: var(--lumo-font-size-l);
+  font-size: var(--lumo-font-size-s);
 }
 
 .view-title {
   margin: 0;
-  font-size: var(--lumo-font-size-l);
+  font-size: var(--lumo-font-size-s);
 }
 
 .view-header {
@@ -78,9 +78,9 @@
 .app-name {
   align-items: center;
   display: flex;
-  height: var(--lumo-size-xl);
+  height: var(--lumo-size-xs);
   margin: 0;
-  padding-left: var(--lumo-space-m);
+  padding-left: var(--lumo-space-s);
   padding-right: var(--lumo-space-m);
   font-size: var(--lumo-font-size-m);
 }

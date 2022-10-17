@@ -1,5 +1,6 @@
 vaadin-grid-cell-content {
     text-align: center;
+    zoom: 90%;
 }
 
 
@@ -48,4 +49,8 @@ vaadin-integer-field {
 
 vaadin-input-container {
     color: pink;
+}
+
+vaadin-grid {
+    zoom: 90%;
 }

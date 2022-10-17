@@ -49,7 +49,7 @@ export class ClaudeDate extends LitElement {
 
     render() {
         return html`
-      <vaadin-date-picker
+      <vaadin-date-picker theme="small"
         label="Na dzień:"
         value="${feedViewStore.startDate}"
         @value-changed="${this.dateChanged}"

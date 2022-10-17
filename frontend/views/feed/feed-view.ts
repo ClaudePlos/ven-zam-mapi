@@ -58,9 +58,6 @@ export class FeedView extends View {
     private kkList: KierunekKosztowVO[] = [];
 
     @state()
-    private blockHours: NapZamBlockadeVO[] = [];
-
-    @state()
     private gzList: GrupaZywionychVO[] = [];
 
 
@@ -70,24 +67,9 @@ export class FeedView extends View {
     private notificationOpened = false;
 
     @state()
-    private textBlockadeHours : string = " ";
-
-    @state()
     private textOpenHours : string = " test";
 
-    @state() private sBlock : boolean = false;
-    @state() private s2Block : boolean = false;
-    @state() private oBlock : boolean = false;
-    @state() private pBlock : boolean = false;
-    @state() private kBlock : boolean = false;
-    @state() private pnBlock : boolean = false;
-
-    @state() private sBlock_kor : boolean = false;
-    @state() private s2Block_kor : boolean = false;
-    @state() private oBlock_kor : boolean = false;
-    @state() private pBlock_kor : boolean = false;
-    @state() private kBlock_kor : boolean = false;
-    @state() private pnBlock_kor : boolean = false;
+    @state() sumS: number = 0;
 
 
     async firstUpdated() {
@@ -102,7 +84,7 @@ export class FeedView extends View {
         return html`
             <div style="width: 99%; height: 100%; padding-left: 5px">
             <div><claude-date></claude-date>
-                <vaadin-combo-box  label="Kierunek kosztów"
+                <vaadin-combo-box  label="Kierunek kosztów" theme="small"
                                    .items="${this.kkList}"
                                    @value-changed="${this.kkChanged}"
                                    item-label-path="kierunekKosztowNazwa"
@@ -111,7 +93,7 @@ export class FeedView extends View {
                                    label="Browser"
                                    helper-text="Wybierz kierunk koszótw"
                 ></vaadin-combo-box>
-                <vaadin-combo-box  label="Grupa żywionych"
+                <vaadin-combo-box  label="Grupa żywionych" theme="small"
                                    .items="${this.gzList}"
                                    @value-changed="${this.gzChanged}"
                                    item-label-path="grupaZywionych"
@@ -120,8 +102,8 @@ export class FeedView extends View {
                                    label="Browser"
                                    helper-text="Wybierz grupę żywionych"
                 ></vaadin-combo-box>
-                <vaadin-button theme="secondary" @click=${this.save}>Zapisz</vaadin-button>
-                <vaadin-button theme="secondary error icon" @click="${() => (this.notificationOpened = true)}" .disabled="${this.notificationOpened}">i</vaadin-button>
+                <vaadin-button theme="secondary small" @click=${this.save}>Zapisz</vaadin-button>
+                <vaadin-button theme="secondary error icon small" @click="${() => (this.notificationOpened = true)}" .disabled="${this.notificationOpened}">i</vaadin-button>
                 <vaadin-notification
                         duration="0"
                         position="top-stretch"
@@ -131,84 +113,86 @@ export class FeedView extends View {
                         }}"
                         ${notificationRenderer(this.renderer, [])}
                 ></vaadin-notification>
-                <vaadin-checkbox label="Aktywuj korektę" @click="${() => (this.correctionActive())}"></vaadin-checkbox>
+                <vaadin-checkbox theme="small" label="Aktywuj korektę" @click="${() => (this.correctionActive())}"></vaadin-checkbox>
                 <span theme="${this.styl}">
                   <span>${this.status}</span>
                 </span>
             </div>
-            <vaadin-grid .items="${feedViewStore.stanyZywionychNaDzien}" style="width: 99%; height: 88%" theme="column-borders">
+            <vaadin-grid class="gridZam" .items="${feedViewStore.stanyZywionychNaDzien}" style="width: 100%; height: 90%" theme="column-borders">
 
-                <vaadin-grid-column path="lp" width="60px"></vaadin-grid-column>
-                <vaadin-grid-column path="dietaNazwa" width="300px"></vaadin-grid-column>
+                <vaadin-grid-column path="lp" width="48px"></vaadin-grid-column>
+                <vaadin-grid-column path="dietaNazwa" width="245px"></vaadin-grid-column>
   
                 
                 <vaadin-grid-column-group header="Planowanie">
-                <vaadin-grid-column header="Ś"   .renderer="${this.valueRendererS}" width="124px"></vaadin-grid-column>
-                <vaadin-grid-column header="IIŚ" .renderer="${this.valueRendererIIS}" width="124px"></vaadin-grid-column>
-                <vaadin-grid-column header="O"   .renderer="${this.valueRendererO}" width="124px"></vaadin-grid-column>
-                <vaadin-grid-column header="P"   .renderer="${this.valueRendererP}" width="124px"></vaadin-grid-column>
-                <vaadin-grid-column header="K"   .renderer="${this.valueRendererK}" width="124px"></vaadin-grid-column>
-                <vaadin-grid-column header="PN"  .renderer="${this.valueRendererPN}" width="124px"></vaadin-grid-column>
-                <vaadin-grid-column header="Uwagi" path="uwagi"></vaadin-grid-column>
+                <vaadin-grid-column header="Ś (${this.sumS})" .renderer="${this.valueRendererS}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="IIŚ" .renderer="${this.valueRendererIIS}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="O"   .renderer="${this.valueRendererO}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="P"   .renderer="${this.valueRendererP}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="K"   .renderer="${this.valueRendererK}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="PN"  .renderer="${this.valueRendererPN}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="Uwagi" path="uwagi" width="70px"></vaadin-grid-column>
                 </vaadin-grid-column-group>
                 
 
                 <vaadin-grid-column-group class="gridCorrection" header="Korekta">
-                <vaadin-grid-column header="Ś"   .renderer="${this.valueRendererS_kor}" width="124px"></vaadin-grid-column>
-                <vaadin-grid-column header="IIŚ" .renderer="${this.valueRendererIIS_kor}" width="124px"></vaadin-grid-column>
-                <vaadin-grid-column header="O"   .renderer="${this.valueRendererO_kor}" width="124px"></vaadin-grid-column>
-                <vaadin-grid-column header="P"   .renderer="${this.valueRendererP_kor}" width="124px"></vaadin-grid-column>
-                <vaadin-grid-column header="K"   .renderer="${this.valueRendererK_kor}" width="124px"></vaadin-grid-column>
-                <vaadin-grid-column header="PN"  .renderer="${this.valueRendererPN_kor}" width="124px"></vaadin-grid-column>
+                <vaadin-grid-column header="Ś"   .renderer="${this.valueRendererS_kor}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="IIŚ" .renderer="${this.valueRendererIIS_kor}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="O"   .renderer="${this.valueRendererO_kor}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="P"   .renderer="${this.valueRendererP_kor}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="K"   .renderer="${this.valueRendererK_kor}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="PN"  .renderer="${this.valueRendererPN_kor}" width="123px"></vaadin-grid-column>
                 </vaadin-grid-column-group>
             </vaadin-grid>
     </div>`;
     }
 
-    gzChanged(e: CustomEvent) {
+    async gzChanged(e: CustomEvent) {
+        this.sumS = 0;
         feedViewStore.idGZ = e.detail.value as number;
-        feedViewStore.getStanyZywionychNaDzien();
+        await feedViewStore.getStanyZywionychNaDzien();
+        await this.calcTotal()
     }
 
     // plan
 
     private valueRendererS = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        model.item.sniadaniePlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${this.sBlock}"
+        model.item.sniadaniePlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${feedViewStore.sBlock}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "s")} 
                          @click=${(e: CustomEvent) => this.updateClickState(model.item)}                                                                        
                value="${model.item.sniadaniePlanIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererIIS = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        model.item.drugieSniadaniePlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${this.s2Block}"
+        model.item.drugieSniadaniePlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${feedViewStore.s2Block}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "2s")}
                          @click=${(e: CustomEvent) => this.updateClickState(model.item)}                                                                      
                value="${model.item.drugieSniadaniePlanIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererO = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        model.item.obiadPlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${this.oBlock}"
+        model.item.obiadPlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${feedViewStore.oBlock}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "o")}
                          @click=${(e: CustomEvent) => this.updateClickState(model.item)}
                value="${model.item.obiadPlanIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererP = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        model.item.podwieczorekPlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${this.pBlock}"
+        model.item.podwieczorekPlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${feedViewStore.pBlock}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "p")}
                          @click=${(e: CustomEvent) => this.updateClickState(model.item)}
                value="${model.item.podwieczorekPlanIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererK = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        model.item.kolacjaPlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${this.kBlock}"
+        model.item.kolacjaPlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${feedViewStore.kBlock}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "k")}
                          @click=${(e: CustomEvent) => this.updateClickState(model.item)}
                value="${model.item.kolacjaPlanIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererPN = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        model.item.posilekNocnyPlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${this.pnBlock}"
+        model.item.posilekNocnyPlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${feedViewStore.pnBlock}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "pn")}
                          @click=${(e: CustomEvent) => this.updateClickState(model.item)}
                value="${model.item.posilekNocnyPlanIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
@@ -217,42 +201,42 @@ export class FeedView extends View {
     // kor
 
     private valueRendererS_kor = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        model.item.sniadanieKorIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-kor" .readonly="${this.sBlock_kor}"
+        model.item.sniadanieKorIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-kor" .readonly="${feedViewStore.sBlock_kor}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "s_kor")} 
                          @click=${(e: CustomEvent) => this.updateClickState(model.item)}                                                                        
                value="${model.item.sniadanieKorIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererIIS_kor = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        model.item.drugieSniadanieKorIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-kor" .readonly="${this.s2Block_kor}"
+        model.item.drugieSniadanieKorIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-kor" .readonly="${feedViewStore.s2Block_kor}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "2s_kor")}
                          @click=${(e: CustomEvent) => this.updateClickState(model.item)}                                                                      
                value="${model.item.drugieSniadanieKorIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererO_kor = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        model.item.obiadKorIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-kor" .readonly="${this.oBlock_kor}"
+        model.item.obiadKorIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-kor" .readonly="${feedViewStore.oBlock_kor}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "o_kor")}
                          @click=${(e: CustomEvent) => this.updateClickState(model.item)}
                value="${model.item.obiadKorIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererP_kor = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        model.item.podwieczorekKorIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-kor" .readonly="${this.pBlock_kor}"
+        model.item.podwieczorekKorIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-kor" .readonly="${feedViewStore.pBlock_kor}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "p_kor")}
                          @click=${(e: CustomEvent) => this.updateClickState(model.item)}
                value="${model.item.podwieczorekKorIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererK_kor = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        model.item.kolacjaKorIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-kor" .readonly="${this.kBlock_kor}"
+        model.item.kolacjaKorIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-kor" .readonly="${feedViewStore.kBlock_kor}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "k_kor")}
                          @click=${(e: CustomEvent) => this.updateClickState(model.item)}
                value="${model.item.kolacjaKorIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererPN_kor = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        model.item.posilekNocnyKorIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-kor" .readonly="${this.pnBlock_kor}"
+        model.item.posilekNocnyKorIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-kor" .readonly="${feedViewStore.pnBlock_kor}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "pn_kor")}
                          @click=${(e: CustomEvent) => this.updateClickState(model.item)}
                value="${model.item.posilekNocnyKorIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
@@ -276,7 +260,7 @@ export class FeedView extends View {
     renderer: NotificationLitRenderer = () => {
         return html`
       <vaadin-horizontal-layout theme="spacing" style="align-items: center;">
-        <div>Plan/Korekta:<p style="color:red"> Godz zablokowane:${this.textBlockadeHours}</p> Godz otwarte:${this.textOpenHours}</div>
+        <div>Plan/Korekta:<p style="color:red"> Godz zablokowane:${feedViewStore.textBlockadeHours}</p> Godz otwarte:${this.textOpenHours}</div>
         <vaadin-button theme="tertiary-inline" @click="${this.close}" aria-label="Close">
           <vaadin-icon icon="lumo:cross"></vaadin-icon>
         </vaadin-button>
@@ -284,8 +268,8 @@ export class FeedView extends View {
     `;
     };
 
-    updateState( item: StanZywionychNaDzienDTO, value: number, type: string){
-        if (type === "s") { item.sniadaniePlanIl = value as number }
+    async updateState( item: StanZywionychNaDzienDTO, value: number, type: string){
+        if (type === "s") {item.sniadaniePlanIl = value as number}
         else if (type === "2s") { item.drugieSniadaniePlanIl = value as number }
         else if (type === "o") { item.obiadPlanIl = value as number }
         else if (type === "p") { item.podwieczorekPlanIl = value as number }
@@ -297,6 +281,14 @@ export class FeedView extends View {
         else if (type === "p_kor") { item.podwieczorekKorIl = value as number }
         else if (type === "k_kor") { item.kolacjaKorIl = value as number }
         else if (type === "pn_kor") { item.posilekNocnyKorIl = value as number }
+        await this.calcTotal()
+    }
+
+    async calcTotal() {
+        this.sumS = 0
+        await feedViewStore.stanyZywionychNaDzien.forEach( item => {
+            this.sumS += Number(item.sniadaniePlanIl) ? Number(item.sniadaniePlanIl) : 0;
+        })
     }
 
     updateClickState( item: StanZywionychNaDzienDTO){
@@ -316,43 +308,11 @@ export class FeedView extends View {
         this.idKK = e.detail.value as number;
         this.getGzList();
         const blockHours = await NapZamBlockadeEndpoint.getBlockadesForKK(this.idKK)
-        this.blockHours = blockHours;
-
-        // if ( dateFnsParse(feedViewStore.startDate, 'yyyy-MM-dd', new Date()) < new Date() ) {
-        //     this.sBlock = true; this.s2Block = true; this.oBlock = true; this.pBlock = true; this.kBlock = true; this.pnBlock = true;
-        //     this.sBlock_kor = true; this.s2Block_kor = true; this.oBlock_kor = true; this.pBlock_kor = true; this.kBlock_kor = true; this.pnBlock_kor = true;
-        //     this.textBlockadeHours = "Zmiany zablokowane, wybrany dzień starszy niż dziś"
-        //     return;
-        // } else {
-            this.blockHours.forEach( item => {
-                this.checkBlockadeEditHours( item.blkTimeOfDay, item.blkRamyCzasowe, item.blkHours);
-                this.textBlockadeHours += item.blkTimeOfDay + "(" + item.blkRamyCzasowe + "):" + item.blkHours?.substring(0,5) + " "
-            })
-        //}
-
+        feedViewStore.blockHours = blockHours;
+        await feedViewStore.checkBlockadeHours()
     }
 
-    // item.blkHours S, 2S, O, P, K, PN
-    // blkRamyCzasowe W, D wczoraj, dzis
-    // blkHours 00:00:00
-    async checkBlockadeEditHours(blkTimeOfDay: string | undefined, blkRamyCzasowe: string | undefined, blkHours: string | undefined) {
-        const rodzaj : string =  "PODSTAWOWE";
-        let d1 = new Date();
-        const d1_tommorow = new Date();
-        d1_tommorow.setDate(d1_tommorow.getDate() + 1)
 
-
-
-        if ( rodzaj === "PODSTAWOWE" ) {
-            // daty równe dziś i oznaczona na stronie, sprawdzamy do któreh godz można wprowadzać zamówienia
-            if ( dateFnsFormat(d1.getDate(),'yyyy-MM-dd') === feedViewStore.startDate ) {
-                // nie mozna planowac na dzis, tylko na jutro
-                this.sBlock = true;
-                this.s2Block = true;
-            }
-
-        }
-    }
 
     async getGzList() {
         const gzList = await GrupaZywionychEndpoint.getAllGzForKkId(this.idKK);
