@@ -2,6 +2,7 @@ import dateFnsFormat from "date-fns/format";
 import {makeAutoObservable} from "mobx";
 import {StanyZywionychEndpoint} from "Frontend/generated/endpoints";
 import StanZywionychNaDzienDTO from "Frontend/generated/pl/kskowronski/data/entity/mapi/StanZywionychNaDzienDTO";
+import {Notification} from "@vaadin/notification";
 
 class FeedViewStore {
 
@@ -18,12 +19,15 @@ class FeedViewStore {
 
     async dateChanged( newDate: string ) {
         this.startDate = newDate;
-        this.getStanyZywionychNaDzien()
+        await this.getStanyZywionychNaDzien()
     }
 
     async getStanyZywionychNaDzien() {
         const stanyZywionychNaDzien = await StanyZywionychEndpoint.pobierzStanZywionychWdniuDlaGZ(feedViewStore.startDate, this.idGZ, this.sortType);
         this.stanyZywionychNaDzien = stanyZywionychNaDzien;
+        if (this.stanyZywionychNaDzien.length != 0){
+            Notification.show("+")
+        }
     }
 
 }
