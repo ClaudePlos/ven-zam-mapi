@@ -18,10 +18,12 @@ vaadin-grid-column-group {
 /* works!*/
 vaadin-grid-cell-content .field-plan {
     color: blue;
+    width: 90px;
 }
 
 vaadin-grid-cell-content .field-kor {
     color: red;
+    width: 90px;
 }
 
 :host([part="increase-button"][part$='button'] ) {
