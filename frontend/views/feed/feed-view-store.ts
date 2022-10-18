@@ -100,28 +100,28 @@ class FeedViewStore {
         const d2 : Date = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), Number(blkHours?.substring(0,2)), Number(blkHours?.substring(3,5)), 0)
 
         //KOREKTA
-        if ( blkTimeOfDay == "S" && d1 > d2 ) {
-           this.sBlock_kor = true;
+        if ( blkTimeOfDay == "S" ) {
+            d1 > d2 ? this.sBlock_kor = true : this.sBlock_kor = false
         }
 
-        if ( blkTimeOfDay == "2S" && d1 > d2 ) {
-            this.s2Block_kor = true;
+        if ( blkTimeOfDay == "2S" ) {
+            d1 > d2 ? this.s2Block_kor = true : this.s2Block_kor = false
         }
 
-        if ( blkTimeOfDay == "O" && d1 > d2 ) {
-            this.oBlock_kor = true;
+        if ( blkTimeOfDay == "O" ) {
+            d1 > d2 ? this.oBlock_kor = true : this.oBlock_kor = false
         }
 
-        if ( blkTimeOfDay == "P" && d1 > d2 ) {
-            this.pBlock_kor = true;
+        if ( blkTimeOfDay == "P" ) {
+            d1 > d2 ? this.pBlock_kor = true : this.pBlock_kor = false
         }
 
-        if ( blkTimeOfDay == "K" && d1 > d2 ) {
-            this.kBlock_kor = true;
+        if ( blkTimeOfDay == "K" ) {
+            d1 > d2 ? this.kBlock_kor = true : this.kBlock_kor = false
         }
 
-        if ( blkTimeOfDay == "PN" && d1 > d2 ) {
-            this.pnBlock_kor = true;
+        if ( blkTimeOfDay == "PN" ) {
+            d1 > d2 ? this.pnBlock_kor = true : this.pnBlock_kor = false
         }
 
     }
