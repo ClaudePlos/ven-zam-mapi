@@ -8,7 +8,7 @@ import NapZamBlockadeVO from "Frontend/generated/pl/kskowronski/data/entity/mapi
 
 class FeedViewStore {
 
-    public startDate: string = dateFnsFormat(new Date('2022-10-17'), 'yyyy-MM-dd');
+    public startDate: string = dateFnsFormat(new Date(), 'yyyy-MM-dd');
     public idGZ: number = 0;
     public sortType: string = "lp";
 
@@ -61,35 +61,69 @@ class FeedViewStore {
             this.textBlockadeHours = "Zmiany zablokowane, wybrany dzień starszy niż dziś"
             return;
         } else {
-            this.sBlock = false; this.s2Block = false; this.oBlock = false; this.pBlock = false; this.kBlock = false; this.pnBlock = false;
-            this.sBlock_kor = false; this.s2Block_kor = false; this.oBlock_kor = false; this.pBlock_kor = false; this.kBlock_kor = false; this.pnBlock_kor = false;
-            this.blockHours.forEach( item => {
-                this.checkBlockadeEditHours( item.blkTimeOfDay, item.blkRamyCzasowe, item.blkHours);
-                this.textBlockadeHours += item.blkTimeOfDay + "(" + item.blkRamyCzasowe + "):" + item.blkHours?.substring(0,5) + " "
-            })
-        }
-    }
-
-    // item.blkHours S, 2S, O, P, K, PN
-    // blkRamyCzasowe W, D wczoraj, dzis
-    // blkHours 00:00:00
-    async checkBlockadeEditHours(blkTimeOfDay: string | undefined, blkRamyCzasowe: string | undefined, blkHours: string | undefined) {
-        const rodzaj : string =  "PODSTAWOWE";
-        let d1 = new Date();
-        const d1_tommorow = new Date();
-        d1_tommorow.setDate(d1_tommorow.getDate() + 1)
-
-
-
-        if ( rodzaj === "PODSTAWOWE" ) {
             // daty równe dziś i oznaczona na stronie, sprawdzamy do któreh godz można wprowadzać zamówienia
-            if ( dateFnsFormat(d1.getDate(),'yyyy-MM-dd') === feedViewStore.startDate ) {
+            // Wiec jeżeli dziś to, blokujemy plan i sprawdzamy tylko korekty:
+            const q1 = dateFnsFormat(new Date(),'yyyy-MM-dd')
+            const q2 = feedViewStore.startDate
+            if ( dateFnsFormat(new Date(),'yyyy-MM-dd') === feedViewStore.startDate ) {
                 // nie mozna planowac na dzis, tylko na jutro
                 this.sBlock = true;
                 this.s2Block = true;
+                this.oBlock = true;
+                this.pBlock = true;
+                this.kBlock = true;
+                this.pnBlock = true;
+
+                this.blockHours.forEach( item => {
+                    if ( item.blkRamyCzasowe === "D" ) {
+                        this.checkBlockadeEditHoursForToday( item.blkTimeOfDay, item.blkRamyCzasowe, item.blkHours);
+                        this.textBlockadeHours += item.blkTimeOfDay + "(" + item.blkRamyCzasowe + "):" + item.blkHours?.substring(0,5) + " "
+                    }
+                })
+
             }
 
+
+
         }
+    }
+
+    // blkTimeOfDay S, 2S, O, P, K, PN
+    // blkRamyCzasowe W jutro, D dzis
+    // blkHours 00:00:00
+    async checkBlockadeEditHoursForToday(blkTimeOfDay: string | undefined, blkRamyCzasowe: string | undefined, blkHours: string | undefined) {
+
+        const d1 : Date = new Date();
+        const d1_tommorow = new Date();
+        d1_tommorow.setDate(d1_tommorow.getDate() + 1)
+
+        const d2 : Date = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), Number(blkHours?.substring(0,2)), Number(blkHours?.substring(3,5)), 0)
+
+        //KOREKTA
+        if ( blkTimeOfDay == "S" && d1 > d2 ) {
+           this.sBlock_kor = true;
+        }
+
+        if ( blkTimeOfDay == "2S" && d1 > d2 ) {
+            this.s2Block_kor = true;
+        }
+
+        if ( blkTimeOfDay == "O" && d1 > d2 ) {
+            this.oBlock_kor = true;
+        }
+
+        if ( blkTimeOfDay == "P" && d1 > d2 ) {
+            this.pBlock_kor = true;
+        }
+
+        if ( blkTimeOfDay == "K" && d1 > d2 ) {
+            this.kBlock_kor = true;
+        }
+
+        if ( blkTimeOfDay == "PN" && d1 > d2 ) {
+            this.pnBlock_kor = true;
+        }
+
     }
 
 }
