@@ -51,15 +51,39 @@ class FeedViewStore {
         }
     }
 
-    async checkBlockadeHours(){
-        const parData : Date = dateFnsParse(this.startDate, 'yyyy-MM-dd', new Date())
+    async checkBlockadeHours() {
+        const parData: Date = dateFnsParse(this.startDate, 'yyyy-MM-dd', new Date())
         const today = new Date()
-        const myToday : Date = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0)
-        if ( parData < myToday ) {
-            this.sBlock = true; this.s2Block = true; this.oBlock = true; this.pBlock = true; this.kBlock = true; this.pnBlock = true;
-            this.sBlock_kor = true; this.s2Block_kor = true; this.oBlock_kor = true; this.pBlock_kor = true; this.kBlock_kor = true; this.pnBlock_kor = true;
+        const myToday: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0)
+        if (parData < myToday) {
+            this.sBlock = true;
+            this.s2Block = true;
+            this.oBlock = true;
+            this.pBlock = true;
+            this.kBlock = true;
+            this.pnBlock = true;
+            this.sBlock_kor = true;
+            this.s2Block_kor = true;
+            this.oBlock_kor = true;
+            this.pBlock_kor = true;
+            this.kBlock_kor = true;
+            this.pnBlock_kor = true;
             this.textBlockadeHours = "Zmiany zablokowane, wybrany dzień starszy niż dziś"
             return;
+        } else if (parData > myToday) {
+            this.sBlock = false;
+            this.s2Block = false;
+            this.oBlock = false;
+            this.pBlock = false;
+            this.kBlock = false;
+            this.pnBlock = false;
+            this.sBlock_kor = false;
+            this.s2Block_kor = false;
+            this.oBlock_kor = false;
+            this.pBlock_kor = false;
+            this.kBlock_kor = false;
+            this.pnBlock_kor = false;
+
         } else {
             // daty równe dziś i oznaczona na stronie, sprawdzamy do któreh godz można wprowadzać zamówienia
             // Wiec jeżeli dziś to, blokujemy plan i sprawdzamy tylko korekty:
