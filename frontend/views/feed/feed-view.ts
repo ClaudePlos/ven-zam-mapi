@@ -70,6 +70,17 @@ export class FeedView extends View {
     private textOpenHours : string = " test";
 
     @state() sumS: number = 0;
+    @state() sumS2: number = 0;
+    @state() sumO: number = 0;
+    @state() sumP: number = 0;
+    @state() sumK: number = 0;
+    @state() sumPN: number = 0;
+    @state() sumS_kor: number = 0;
+    @state() sumS2_kor: number = 0;
+    @state() sumO_kor: number = 0;
+    @state() sumP_kor: number = 0;
+    @state() sumK_kor: number = 0;
+    @state() sumPN_kor: number = 0;
 
 
     async firstUpdated() {
@@ -126,22 +137,22 @@ export class FeedView extends View {
                 
                 <vaadin-grid-column-group header="Planowanie">
                 <vaadin-grid-column header="Ś (${this.sumS})" .renderer="${this.valueRendererS}" width="123px"></vaadin-grid-column>
-                <vaadin-grid-column header="IIŚ" .renderer="${this.valueRendererIIS}" width="123px"></vaadin-grid-column>
-                <vaadin-grid-column header="O"   .renderer="${this.valueRendererO}" width="123px"></vaadin-grid-column>
-                <vaadin-grid-column header="P"   .renderer="${this.valueRendererP}" width="123px"></vaadin-grid-column>
-                <vaadin-grid-column header="K"   .renderer="${this.valueRendererK}" width="123px"></vaadin-grid-column>
-                <vaadin-grid-column header="PN"  .renderer="${this.valueRendererPN}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="IIŚ (${this.sumS2})" .renderer="${this.valueRendererIIS}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="O (${this.sumO})"   .renderer="${this.valueRendererO}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="P (${this.sumP})"   .renderer="${this.valueRendererP}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="K (${this.sumK})"   .renderer="${this.valueRendererK}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="PN (${this.sumPN})"  .renderer="${this.valueRendererPN}" width="123px"></vaadin-grid-column>
                 <vaadin-grid-column header="Uwagi" path="uwagi" width="70px"></vaadin-grid-column>
                 </vaadin-grid-column-group>
                 
 
                 <vaadin-grid-column-group class="gridCorrection" header="Korekta">
-                <vaadin-grid-column header="Ś"   .renderer="${this.valueRendererS_kor}" width="123px"></vaadin-grid-column>
-                <vaadin-grid-column header="IIŚ" .renderer="${this.valueRendererIIS_kor}" width="123px"></vaadin-grid-column>
-                <vaadin-grid-column header="O"   .renderer="${this.valueRendererO_kor}" width="123px"></vaadin-grid-column>
-                <vaadin-grid-column header="P"   .renderer="${this.valueRendererP_kor}" width="123px"></vaadin-grid-column>
-                <vaadin-grid-column header="K"   .renderer="${this.valueRendererK_kor}" width="123px"></vaadin-grid-column>
-                <vaadin-grid-column header="PN"  .renderer="${this.valueRendererPN_kor}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="Ś (${this.sumS_kor})"   .renderer="${this.valueRendererS_kor}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="IIŚ (${this.sumS2_kor})" .renderer="${this.valueRendererIIS_kor}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="O (${this.sumO_kor})"   .renderer="${this.valueRendererO_kor}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="P (${this.sumP_kor})"   .renderer="${this.valueRendererP_kor}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="K (${this.sumK_kor})"   .renderer="${this.valueRendererK_kor}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="PN (${this.sumPN_kor})"  .renderer="${this.valueRendererPN_kor}" width="123px"></vaadin-grid-column>
                 </vaadin-grid-column-group>
             </vaadin-grid>
     </div>`;
@@ -285,9 +296,21 @@ export class FeedView extends View {
     }
 
     async calcTotal() {
-        this.sumS = 0
+        this.sumS = 0; this.sumS2 = 0; this.sumO = 0; this.sumP = 0; this.sumK = 0; this.sumPN = 0;
+        this.sumS_kor = 0; this.sumS2_kor = 0; this.sumO_kor = 0; this.sumP_kor = 0; this.sumK_kor = 0; this.sumPN_kor = 0;
         await feedViewStore.stanyZywionychNaDzien.forEach( item => {
             this.sumS += Number(item.sniadaniePlanIl) ? Number(item.sniadaniePlanIl) : 0;
+            this.sumS2 += Number(item.drugieSniadaniePlanIl) ? Number(item.drugieSniadaniePlanIl) : 0;
+            this.sumO += Number(item.obiadPlanIl) ? Number(item.obiadPlanIl) : 0;
+            this.sumP += Number(item.podwieczorekPlanIl) ? Number(item.podwieczorekPlanIl) : 0;
+            this.sumK += Number(item.kolacjaPlanIl) ? Number(item.kolacjaPlanIl) : 0;
+            this.sumPN += Number(item.posilekNocnyPlanIl) ? Number(item.posilekNocnyPlanIl) : 0;
+            this.sumS_kor += Number(item.sniadanieKorIl) ? Number(item.sniadanieKorIl) : 0;
+            this.sumS2_kor += Number(item.drugieSniadanieKorIl) ? Number(item.drugieSniadanieKorIl) : 0;
+            this.sumO_kor += Number(item.obiadKorIl) ? Number(item.obiadKorIl) : 0;
+            this.sumP_kor += Number(item.podwieczorekKorIl) ? Number(item.podwieczorekKorIl) : 0;
+            this.sumK_kor += Number(item.kolacjaKorIl) ? Number(item.kolacjaKorIl) : 0;
+            this.sumPN_kor += Number(item.posilekNocnyKorIl) ? Number(item.posilekNocnyKorIl) : 0;
         })
     }
 
