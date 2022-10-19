@@ -71,6 +71,10 @@ class FeedViewStore {
             this.textBlockadeHours = "Zmiany zablokowane, wybrany dzień starszy niż dziś"
             return;
         } else if (parData > myToday) {
+
+            const d1_tommorow = new Date();
+            d1_tommorow.setDate(d1_tommorow.getDate() + 1)
+
             this.sBlock = false;
             this.s2Block = false;
             this.oBlock = false;
@@ -84,18 +88,19 @@ class FeedViewStore {
             this.kBlock_kor = false;
             this.pnBlock_kor = false;
 
-            this.blockHours.forEach( item => {
-                if ( item.blkRamyCzasowe === "W" ) {
-                    this.checkBlockadeEditHoursForTomorrow( item.blkTimeOfDay, item.blkHours);
-                    this.textBlockadeHours += item.blkTimeOfDay + "(" + item.blkRamyCzasowe + "):" + item.blkHours?.substring(0,5) + " "
-                }
-            })
-
+            if ( dateFnsFormat(d1_tommorow,'yyyy-MM-dd') === feedViewStore.startDate ) {
+                this.blockHours.forEach( item => {
+                    if ( item.blkRamyCzasowe === "W" ) {
+                        this.checkBlockadeEditHoursForTomorrow( item.blkTimeOfDay, item.blkHours);
+                        this.textBlockadeHours += item.blkTimeOfDay + "(" + item.blkRamyCzasowe + "):" + item.blkHours?.substring(0,5) + " "
+                    }
+                })
+            }
         } else {
             // daty równe dziś i oznaczona na stronie, sprawdzamy do któreh godz można wprowadzać zamówienia
             // Wiec jeżeli dziś to, blokujemy plan i sprawdzamy tylko korekty:
-            const q1 = dateFnsFormat(new Date(),'yyyy-MM-dd')
-            const q2 = feedViewStore.startDate
+            //const q1 = dateFnsFormat(new Date(),'yyyy-MM-dd')
+            //const q2 = feedViewStore.startDate
             if ( dateFnsFormat(new Date(),'yyyy-MM-dd') === feedViewStore.startDate ) {
                 // nie mozna planowac na dzis, tylko na jutro
                 this.sBlock = true;
@@ -125,9 +130,6 @@ class FeedViewStore {
     async checkBlockadeEditHoursForToday(blkTimeOfDay: string | undefined, blkHours: string | undefined) {
 
         const d1 : Date = new Date();
-        const d1_tommorow = new Date();
-        d1_tommorow.setDate(d1_tommorow.getDate() + 1)
-
         const d2 : Date = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), Number(blkHours?.substring(0,2)), Number(blkHours?.substring(3,5)), 0)
 
         //KOREKTA
@@ -164,9 +166,6 @@ class FeedViewStore {
     async checkBlockadeEditHoursForTomorrow(blkTimeOfDay: string | undefined, blkHours: string | undefined) {
 
         const d1 : Date = new Date();
-        const d1_tommorow = new Date();
-        d1_tommorow.setDate(d1_tommorow.getDate() + 1)
-
         const d2 : Date = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), Number(blkHours?.substring(0,2)), Number(blkHours?.substring(3,5)), 0)
 
         //KOREKTA

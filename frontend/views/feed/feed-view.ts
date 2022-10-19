@@ -11,7 +11,7 @@ import '@vaadin/horizontal-layout';
 import '@vaadin/icon';
 import '@vaadin/checkbox';
 import '@vaadin/text-field';
-
+import '@vaadin/dialog';
 
 
 import { html, render } from 'lit';
@@ -20,6 +20,8 @@ import {Notification} from "@vaadin/notification";
 import type { NotificationOpenedChangedEvent } from '@vaadin/notification';
 import { notificationRenderer } from '@vaadin/notification/lit.js';
 import type { NotificationLitRenderer } from '@vaadin/notification/lit.js';
+import { gridRowDetailsRenderer } from '@vaadin/grid/lit.js';
+import type { GridActiveItemChangedEvent } from '@vaadin/grid';
 import { View } from '../../views/view';
 import { Binder } from '@hilla/form';
 import { GridItemModel } from '@vaadin/grid';
@@ -52,6 +54,9 @@ export class FeedView extends View {
     czyKorekta: boolean = false;
 
     @state()
+    private detailsOpenedItem: StanZywionychNaDzienDTO[] = [];
+
+    @state()
     styl: string = "badge";
 
     @state()
@@ -68,6 +73,7 @@ export class FeedView extends View {
 
     @state()
     private notificationOpened = false;
+
 
     @state()
     private textOpenHours : string = " test";
@@ -132,7 +138,26 @@ export class FeedView extends View {
                   <span>${this.status}</span>
                 </span>
             </div>
-            <vaadin-grid class="gridZam" .items="${feedViewStore.stanyZywionychNaDzien}" style="width: 100%; height: 90%" theme="column-borders">
+            <vaadin-grid class="gridZam" .items="${feedViewStore.stanyZywionychNaDzien}" style="width: 100%; height: 90%" theme="column-borders"
+
+                         .detailsOpenedItems="${this.detailsOpenedItem}"
+                         @active-item-changed="${(e: GridActiveItemChangedEvent<StanZywionychNaDzienDTO>) =>
+                                 (this.detailsOpenedItem = [e.detail.value])}"
+                         ${gridRowDetailsRenderer<StanZywionychNaDzienDTO>(
+                                 (item) => html`
+            <vaadin-form-layout .responsiveSteps="${[{ minWidth: '0', columns: 1 }]}">
+              <vaadin-text-field
+                label="Uwagi"
+                .value="${item.szUwagi}"
+                colspan="5"
+                readonly
+              >
+            </vaadin-form-layout>
+          `,
+                                 []
+                         )}
+            
+            >
 
                 <vaadin-grid-column path="lp" width="48px"></vaadin-grid-column>
                 <vaadin-grid-column header="Dieta Nazwa" .renderer="${this.dietNameRenderer}" width="245px" resizable></vaadin-grid-column>
@@ -145,7 +170,6 @@ export class FeedView extends View {
                 <vaadin-grid-column header="P (${this.sumP})"   .renderer="${this.valueRendererP}" width="123px"></vaadin-grid-column>
                 <vaadin-grid-column header="K (${this.sumK})"   .renderer="${this.valueRendererK}" width="123px"></vaadin-grid-column>
                 <vaadin-grid-column header="PN (${this.sumPN})"  .renderer="${this.valueRendererPN}" width="123px"></vaadin-grid-column>
-                <vaadin-grid-column header="Uwagi" .renderer="${this.valueRendererComments}" width="70px"></vaadin-grid-column>
                 </vaadin-grid-column-group>
                 
 
@@ -216,14 +240,14 @@ export class FeedView extends View {
                value="${model.item.posilekNocnyPlanIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
-    private valueRendererComments = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        render(html` <vaadin-text-field
-                @value-changed=${(e: CustomEvent) => this.updateState(model.item, 0, e.detail.value as string, "comment")}
-                value="${model.item.szUwagi as string}"></vaadin-text-field>`, root) ;
-    }
+    // comment
+    // private valueRendererComments = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
+    //     render(html` <vaadin-text-field
+    //             @value-changed=${(e: CustomEvent) => this.updateState(model.item, 0, e.detail.value as string, "comment")}
+    //             value="${model.item.szUwagi as string}"></vaadin-text-field>`, root) ;
+    // }
 
     // kor
-
     private valueRendererS_kor = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
         model.item.sniadanieKorIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-kor" .readonly="${feedViewStore.sBlock_kor}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "", "s_kor")} 
@@ -406,4 +430,5 @@ export class FeedView extends View {
     private close() {
         this.notificationOpened = false;
     }
+
 }
