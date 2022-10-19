@@ -84,6 +84,13 @@ class FeedViewStore {
             this.kBlock_kor = false;
             this.pnBlock_kor = false;
 
+            this.blockHours.forEach( item => {
+                if ( item.blkRamyCzasowe === "W" ) {
+                    this.checkBlockadeEditHoursForTomorrow( item.blkTimeOfDay, item.blkHours);
+                    this.textBlockadeHours += item.blkTimeOfDay + "(" + item.blkRamyCzasowe + "):" + item.blkHours?.substring(0,5) + " "
+                }
+            })
+
         } else {
             // daty równe dziś i oznaczona na stronie, sprawdzamy do któreh godz można wprowadzać zamówienia
             // Wiec jeżeli dziś to, blokujemy plan i sprawdzamy tylko korekty:
@@ -100,7 +107,7 @@ class FeedViewStore {
 
                 this.blockHours.forEach( item => {
                     if ( item.blkRamyCzasowe === "D" ) {
-                        this.checkBlockadeEditHoursForToday( item.blkTimeOfDay, item.blkRamyCzasowe, item.blkHours);
+                        this.checkBlockadeEditHoursForToday( item.blkTimeOfDay, item.blkHours);
                         this.textBlockadeHours += item.blkTimeOfDay + "(" + item.blkRamyCzasowe + "):" + item.blkHours?.substring(0,5) + " "
                     }
                 })
@@ -115,7 +122,7 @@ class FeedViewStore {
     // blkTimeOfDay S, 2S, O, P, K, PN
     // blkRamyCzasowe W jutro, D dzis
     // blkHours 00:00:00
-    async checkBlockadeEditHoursForToday(blkTimeOfDay: string | undefined, blkRamyCzasowe: string | undefined, blkHours: string | undefined) {
+    async checkBlockadeEditHoursForToday(blkTimeOfDay: string | undefined, blkHours: string | undefined) {
 
         const d1 : Date = new Date();
         const d1_tommorow = new Date();
@@ -146,6 +153,45 @@ class FeedViewStore {
 
         if ( blkTimeOfDay == "PN" ) {
             d1 > d2 ? this.pnBlock_kor = true : this.pnBlock_kor = false
+        }
+
+    }
+
+
+    // blkTimeOfDay S, 2S, O, P, K, PN
+    // blkRamyCzasowe W jutro, D dzis
+    // blkHours 00:00:00
+    async checkBlockadeEditHoursForTomorrow(blkTimeOfDay: string | undefined, blkHours: string | undefined) {
+
+        const d1 : Date = new Date();
+        const d1_tommorow = new Date();
+        d1_tommorow.setDate(d1_tommorow.getDate() + 1)
+
+        const d2 : Date = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), Number(blkHours?.substring(0,2)), Number(blkHours?.substring(3,5)), 0)
+
+        //KOREKTA
+        if ( blkTimeOfDay == "S" ) {
+            d1 > d2 ? this.sBlock = true : this.sBlock = false
+        }
+
+        if ( blkTimeOfDay == "2S" ) {
+            d1 > d2 ? this.s2Block = true : this.s2Block = false
+        }
+
+        if ( blkTimeOfDay == "O" ) {
+            d1 > d2 ? this.oBlock = true : this.oBlock = false
+        }
+
+        if ( blkTimeOfDay == "P" ) {
+            d1 > d2 ? this.pBlock = true : this.pBlock = false
+        }
+
+        if ( blkTimeOfDay == "K" ) {
+            d1 > d2 ? this.kBlock = true : this.kBlock = false
+        }
+
+        if ( blkTimeOfDay == "PN" ) {
+            d1 > d2 ? this.pnBlock = true : this.pnBlock = false
         }
 
     }
