@@ -17,6 +17,7 @@ class FeedViewStore {
     public blockHours: NapZamBlockadeVO[] = [];
 
     public textBlockadeHours : string = "";
+    public textOpenHours : string = "";
 
     public sBlock : boolean = false;
     public s2Block : boolean = false;
@@ -92,7 +93,6 @@ class FeedViewStore {
                 this.blockHours.forEach( item => {
                     if ( item.blkRamyCzasowe === "W" ) {
                         this.checkBlockadeEditHoursForTomorrow( item.blkTimeOfDay, item.blkHours);
-                        this.textBlockadeHours += item.blkTimeOfDay + "(" + item.blkRamyCzasowe + "):" + item.blkHours?.substring(0,5) + " "
                     }
                 })
             }
@@ -113,7 +113,6 @@ class FeedViewStore {
                 this.blockHours.forEach( item => {
                     if ( item.blkRamyCzasowe === "D" ) {
                         this.checkBlockadeEditHoursForToday( item.blkTimeOfDay, item.blkHours);
-                        this.textBlockadeHours += item.blkTimeOfDay + "(" + item.blkRamyCzasowe + "):" + item.blkHours?.substring(0,5) + " "
                     }
                 })
 
@@ -157,6 +156,8 @@ class FeedViewStore {
             d1 > d2 ? this.pnBlock_kor = true : this.pnBlock_kor = false
         }
 
+        d1 > d2 ? this.textBlockadeHours += blkTimeOfDay + "(D):" + blkHours?.substring(0,5) + " " : this.textOpenHours += blkTimeOfDay + "(D):" + blkHours?.substring(0,5) + " "
+
     }
 
 
@@ -192,6 +193,8 @@ class FeedViewStore {
         if ( blkTimeOfDay == "PN" ) {
             d1 > d2 ? this.pnBlock = true : this.pnBlock = false
         }
+
+        d1 > d2 ? this.textBlockadeHours += blkTimeOfDay + "(D):" + blkHours?.substring(0,5) + " " : this.textOpenHours += blkTimeOfDay + "(D):" + blkHours?.substring(0,5) + " "
 
     }
 

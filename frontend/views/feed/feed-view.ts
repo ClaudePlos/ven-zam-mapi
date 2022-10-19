@@ -74,10 +74,6 @@ export class FeedView extends View {
     @state()
     private notificationOpened = false;
 
-
-    @state()
-    private textOpenHours : string = " test";
-
     @state() sumS: number = 0;
     @state() sumS2: number = 0;
     @state() sumO: number = 0;
@@ -294,7 +290,7 @@ export class FeedView extends View {
     renderer: NotificationLitRenderer = () => {
         return html`
       <vaadin-horizontal-layout theme="spacing" style="align-items: center;">
-        <div>Plan/Korekta:<p style="color:red"> Godz zablokowane:${feedViewStore.textBlockadeHours}</p> Godz otwarte:${this.textOpenHours}</div>
+        <div>Plan/Korekta:<p style="color:red"> Godz zablokowane: ${feedViewStore.textBlockadeHours}</p><p style="color:green"> Godz otwarte: ${feedViewStore.textOpenHours}</p></div>
         <vaadin-button theme="tertiary-inline" @click="${this.close}" aria-label="Close">
           <vaadin-icon icon="lumo:cross"></vaadin-icon>
         </vaadin-button>
