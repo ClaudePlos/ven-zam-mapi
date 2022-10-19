@@ -139,25 +139,20 @@ export class FeedView extends View {
                 </span>
             </div>
             <vaadin-grid class="gridZam" .items="${feedViewStore.stanyZywionychNaDzien}" style="width: 100%; height: 90%" theme="column-borders"
-
                          .detailsOpenedItems="${this.detailsOpenedItem}"
                          @active-item-changed="${(e: GridActiveItemChangedEvent<StanZywionychNaDzienDTO>) =>
                                  (this.detailsOpenedItem = [e.detail.value])}"
                          ${gridRowDetailsRenderer<StanZywionychNaDzienDTO>(
                                  (item) => html`
-            <vaadin-form-layout .responsiveSteps="${[{ minWidth: '0', columns: 1 }]}">
+            <vaadin-form-layout .responsiveSteps="${[{ minWidth: '0', columns: 3 }]}">
               <vaadin-text-field
-                label="Uwagi"
+                label="Uwagi" style="width:800px"
                 .value="${item.szUwagi}"
-                colspan="5"
-                readonly
-              >
+                @value-changed=${(e: CustomEvent) => this.updateState(item, 0, e.detail.value as string, "comment")}
+                @click=${(e: CustomEvent) => this.updateClickState(item, "")}
+                colspan="3">
             </vaadin-form-layout>
-          `,
-                                 []
-                         )}
-            
-            >
+          `,[])}>
 
                 <vaadin-grid-column path="lp" width="48px"></vaadin-grid-column>
                 <vaadin-grid-column header="Dieta Nazwa" .renderer="${this.dietNameRenderer}" width="245px" resizable></vaadin-grid-column>
@@ -240,13 +235,6 @@ export class FeedView extends View {
                value="${model.item.posilekNocnyPlanIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
-    // comment
-    // private valueRendererComments = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-    //     render(html` <vaadin-text-field
-    //             @value-changed=${(e: CustomEvent) => this.updateState(model.item, 0, e.detail.value as string, "comment")}
-    //             value="${model.item.szUwagi as string}"></vaadin-text-field>`, root) ;
-    // }
-
     // kor
     private valueRendererS_kor = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
         model.item.sniadanieKorIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-kor" .readonly="${feedViewStore.sBlock_kor}"
@@ -302,8 +290,6 @@ export class FeedView extends View {
             this.styl = "badge";
         }
     }
-
-
 
     renderer: NotificationLitRenderer = () => {
         return html`
@@ -396,13 +382,10 @@ export class FeedView extends View {
         await feedViewStore.checkBlockadeHours()
     }
 
-
-
     async getGzList() {
         const gzList = await GrupaZywionychEndpoint.getAllGzForKkId(this.idKK);
         this.gzList = gzList;
     }
-
 
     async save() {
         const ret = await StanyZywionychEndpoint.zapiszStanZyw(feedViewStore.startDate, feedViewStore.idGZ, feedViewStore.sortType, this.idKK, this.czyKorekta === true ? "T" : "N"
