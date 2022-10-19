@@ -54,3 +54,7 @@ vaadin-input-container {
 vaadin-grid {
     zoom: 90%;
 }
+
+vaadin-grid-cell-content .sK {
+    color: red;
+}

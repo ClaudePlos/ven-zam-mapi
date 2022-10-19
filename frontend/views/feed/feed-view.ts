@@ -101,7 +101,7 @@ export class FeedView extends View {
                                    @value-changed="${this.kkChanged}"
                                    item-label-path="kierunekKosztowNazwa"
                                    item-value-path="idKierunekKosztow"
-                                   allow-custom-value
+                                   allow-custom-value style="width:300px"
                                    label="Browser"
                                    helper-text="Wybierz kierunk koszótw"
                 ></vaadin-combo-box>
@@ -110,7 +110,7 @@ export class FeedView extends View {
                                    @value-changed="${this.gzChanged}"
                                    item-label-path="grupaZywionych"
                                    item-value-path="idGrupaZywionych"
-                                   allow-custom-value
+                                   allow-custom-value style="width:300px"
                                    label="Browser"
                                    helper-text="Wybierz grupę żywionych"
                 ></vaadin-combo-box>
@@ -133,7 +133,7 @@ export class FeedView extends View {
             <vaadin-grid class="gridZam" .items="${feedViewStore.stanyZywionychNaDzien}" style="width: 100%; height: 90%" theme="column-borders">
 
                 <vaadin-grid-column path="lp" width="48px"></vaadin-grid-column>
-                <vaadin-grid-column path="dietaNazwa" width="245px"></vaadin-grid-column>
+                <vaadin-grid-column header="Dieta Nazwa" .renderer="${this.dietNameRenderer}" width="245px" resizable></vaadin-grid-column>
   
                 
                 <vaadin-grid-column-group header="Planowanie">
@@ -147,7 +147,7 @@ export class FeedView extends View {
                 </vaadin-grid-column-group>
                 
 
-                <vaadin-grid-column-group class="gridCorrection" header="Korekta">
+                <vaadin-grid-column-group class="gridCorrection" header="Korekta" >
                 <vaadin-grid-column header="Ś (${this.sumS_kor})"   .renderer="${this.valueRendererS_kor}" width="123px"></vaadin-grid-column>
                 <vaadin-grid-column header="IIŚ (${this.sumS2_kor})" .renderer="${this.valueRendererIIS_kor}" width="123px"></vaadin-grid-column>
                 <vaadin-grid-column header="O (${this.sumO_kor})"   .renderer="${this.valueRendererO_kor}" width="123px"></vaadin-grid-column>
@@ -165,6 +165,10 @@ export class FeedView extends View {
         await feedViewStore.getStanyZywionychNaDzien();
         await this.calcTotal()
     }
+
+    private dietNameRenderer = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
+        render(html` <span title='${model.item.dietaNazwa}'>${model.item.dietaNazwa}</span>`, root);
+    };
 
     // plan
 
@@ -306,6 +310,7 @@ export class FeedView extends View {
     async calcTotal() {
         this.sumS = 0; this.sumS2 = 0; this.sumO = 0; this.sumP = 0; this.sumK = 0; this.sumPN = 0;
         this.sumS_kor = 0; this.sumS2_kor = 0; this.sumO_kor = 0; this.sumP_kor = 0; this.sumK_kor = 0; this.sumPN_kor = 0;
+        let sumS_korL = 0; let sumS2_kor = 0; let sumO_korL = 0; let sumP_korL = 0; let sumK_korL = 0; let sumPN_korL = 0;
         await feedViewStore.stanyZywionychNaDzien.forEach( item => {
             this.sumS += Number(item.sniadaniePlanIl) ? Number(item.sniadaniePlanIl) : 0;
             this.sumS2 += Number(item.drugieSniadaniePlanIl) ? Number(item.drugieSniadaniePlanIl) : 0;
@@ -313,13 +318,21 @@ export class FeedView extends View {
             this.sumP += Number(item.podwieczorekPlanIl) ? Number(item.podwieczorekPlanIl) : 0;
             this.sumK += Number(item.kolacjaPlanIl) ? Number(item.kolacjaPlanIl) : 0;
             this.sumPN += Number(item.posilekNocnyPlanIl) ? Number(item.posilekNocnyPlanIl) : 0;
-            this.sumS_kor += Number(item.sniadanieKorIl) ? Number(item.sniadanieKorIl) : 0;
-            this.sumS2_kor += Number(item.drugieSniadanieKorIl) ? Number(item.drugieSniadanieKorIl) : 0;
-            this.sumO_kor += Number(item.obiadKorIl) ? Number(item.obiadKorIl) : 0;
-            this.sumP_kor += Number(item.podwieczorekKorIl) ? Number(item.podwieczorekKorIl) : 0;
-            this.sumK_kor += Number(item.kolacjaKorIl) ? Number(item.kolacjaKorIl) : 0;
-            this.sumPN_kor += Number(item.posilekNocnyKorIl) ? Number(item.posilekNocnyKorIl) : 0;
+
+            sumS_korL += Number(item.sniadanieKorIl) ? Number(item.sniadanieKorIl) : 0;
+            sumS2_kor += Number(item.drugieSniadanieKorIl) ? this.sumS2 + Number(item.drugieSniadanieKorIl) : 0;
+            sumO_korL += Number(item.obiadKorIl) ? this.sumO + Number(item.obiadKorIl) : 0;
+            sumP_korL += Number(item.podwieczorekKorIl) ? this.sumP + Number(item.podwieczorekKorIl) : 0;
+            sumK_korL += Number(item.kolacjaKorIl) ? this.sumK + Number(item.kolacjaKorIl) : 0;
+            sumPN_korL += Number(item.posilekNocnyKorIl) ?  this.sumPN + Number(item.posilekNocnyKorIl) : 0;
         })
+
+        this.sumS_kor = this.sumS + sumS_korL
+        this.sumS2_kor = this.sumS2 + sumS2_kor
+        this.sumO_kor = this.sumO + sumO_korL
+        this.sumP_kor = this.sumP + sumP_korL
+        this.sumK_kor = this.sumK + sumK_korL
+        this.sumPN_kor = this.sumPN + sumPN_korL
     }
 
     updateClickState( item: StanZywionychNaDzienDTO){
