@@ -47,7 +47,9 @@ import dateFnsParse from "date-fns/parse";
 export class FeedView extends View {
 
     idKK: number = 0;
-    czyKorekta: string = "N";
+
+    @state()
+    czyKorekta: boolean = false;
 
     @state()
     styl: string = "badge";
@@ -125,7 +127,7 @@ export class FeedView extends View {
                         }}"
                         ${notificationRenderer(this.renderer, [])}
                 ></vaadin-notification>
-                <vaadin-checkbox theme="small" label="Aktywuj korektę" @click="${() => (this.correctionActive())}"></vaadin-checkbox>
+                <vaadin-checkbox theme="small" .checked=${this.czyKorekta} label="Aktywuj korektę"  @click="${() => (this.correctionActive())}"></vaadin-checkbox>
                 <span theme="${this.styl}">
                   <span>${this.status}</span>
                 </span>
@@ -175,42 +177,42 @@ export class FeedView extends View {
     private valueRendererS = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
         model.item.sniadaniePlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${feedViewStore.sBlock}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "", "s")} 
-                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}                                                                        
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item, "")}                                                                        
                value="${model.item.sniadaniePlanIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererIIS = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
         model.item.drugieSniadaniePlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${feedViewStore.s2Block}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "", "2s")}
-                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}                                                                      
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item, "")}                                                                      
                value="${model.item.drugieSniadaniePlanIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererO = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
         model.item.obiadPlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${feedViewStore.oBlock}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "", "o")}
-                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item, "")}
                value="${model.item.obiadPlanIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererP = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
         model.item.podwieczorekPlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${feedViewStore.pBlock}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "", "p")}
-                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item, "")}
                value="${model.item.podwieczorekPlanIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererK = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
         model.item.kolacjaPlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${feedViewStore.kBlock}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "", "k")}
-                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item, "")}
                value="${model.item.kolacjaPlanIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererPN = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
         model.item.posilekNocnyPlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${feedViewStore.pnBlock}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "", "pn")}
-                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item, "")}
                value="${model.item.posilekNocnyPlanIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
@@ -225,53 +227,53 @@ export class FeedView extends View {
     private valueRendererS_kor = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
         model.item.sniadanieKorIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-kor" .readonly="${feedViewStore.sBlock_kor}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "", "s_kor")} 
-                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}                                                                        
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item, "kor")}                                                                        
                value="${model.item.sniadanieKorIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererIIS_kor = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
         model.item.drugieSniadanieKorIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-kor" .readonly="${feedViewStore.s2Block_kor}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "", "2s_kor")}
-                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}                                                                      
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item, "kor")}                                                                      
                value="${model.item.drugieSniadanieKorIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererO_kor = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
         model.item.obiadKorIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-kor" .readonly="${feedViewStore.oBlock_kor}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "", "o_kor")}
-                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item, "kor")}
                value="${model.item.obiadKorIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererP_kor = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
         model.item.podwieczorekKorIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-kor" .readonly="${feedViewStore.pBlock_kor}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "", "p_kor")}
-                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item, "kor")}
                value="${model.item.podwieczorekKorIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererK_kor = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
         model.item.kolacjaKorIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-kor" .readonly="${feedViewStore.kBlock_kor}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "", "k_kor")}
-                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item, "kor")}
                value="${model.item.kolacjaKorIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererPN_kor = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
         model.item.posilekNocnyKorIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-kor" .readonly="${feedViewStore.pnBlock_kor}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "", "pn_kor")}
-                         @click=${(e: CustomEvent) => this.updateClickState(model.item)}
+                         @click=${(e: CustomEvent) => this.updateClickState(model.item, "kor")}
                value="${model.item.posilekNocnyKorIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
 
     correctionActive() {
-        if (this.czyKorekta === "N") {
-            this.czyKorekta = "T"
+        if (this.czyKorekta === false) {
+            this.czyKorekta = true
             this.status = "Korekta"
             this.styl = "badge error"
         } else {
-            this.czyKorekta = "N"
+            this.czyKorekta = false
             this.status = "Edycja"
             this.styl = "badge";
         }
@@ -335,8 +337,22 @@ export class FeedView extends View {
         this.sumPN_kor = this.sumPN + sumPN_korL
     }
 
-    updateClickState( item: StanZywionychNaDzienDTO){
-            item.dataChanged = true;
+    updateClickState( item: StanZywionychNaDzienDTO, typeOfFeed : String){
+
+        if ( typeOfFeed === "kor" && this.czyKorekta === false) {
+            this.correctionActive()
+            const notification = Notification.show("Aktywuję korektę! Uwaga wartości zmienione na korekcie nie zostaną zapisane.", {position: 'middle', duration: 2000});
+            notification.setAttribute('theme', 'error');
+        }
+
+        if ( typeOfFeed === "" && this.czyKorekta === true) {
+            this.correctionActive()
+            const notification = Notification.show("Dezaktywuję korektę! Uwaga wartości zmienione na planie nie zostaną zapisane.", {position: 'middle', duration: 2000});
+            notification.setAttribute('theme', 'primary');
+        }
+
+        item.dataChanged = true;
+
     }
 
     handleChange = (event: CustomEvent<{ value: string }>) => {
@@ -365,7 +381,7 @@ export class FeedView extends View {
 
 
     async save() {
-        const ret = await StanyZywionychEndpoint.zapiszStanZyw(feedViewStore.startDate, feedViewStore.idGZ, feedViewStore.sortType, this.idKK, this.czyKorekta
+        const ret = await StanyZywionychEndpoint.zapiszStanZyw(feedViewStore.startDate, feedViewStore.idGZ, feedViewStore.sortType, this.idKK, this.czyKorekta === true ? "T" : "N"
             , appStore.user?.operatorId,  feedViewStore.stanyZywionychNaDzien.filter((obj) => { return obj.dataChanged === true }));
         const notification = Notification.show(ret, {position: 'middle', duration: 1000});
         notification.setAttribute('theme', 'success');
