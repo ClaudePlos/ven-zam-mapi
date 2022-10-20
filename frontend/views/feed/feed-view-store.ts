@@ -53,10 +53,12 @@ class FeedViewStore {
     }
 
     async checkBlockadeHours() {
+        this.textOpenHours = "";
+        this.textBlockadeHours = "";
         const parData: Date = dateFnsParse(this.startDate, 'yyyy-MM-dd', new Date())
         const today = new Date()
         const myToday: Date = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0)
-        if (parData < myToday) {
+        if (parData < myToday) { // jeśli dzień wybrany na starszy niż dziś
             this.sBlock = true;
             this.s2Block = true;
             this.oBlock = true;
@@ -71,7 +73,7 @@ class FeedViewStore {
             this.pnBlock_kor = true;
             this.textBlockadeHours = "Zmiany zablokowane, wybrany dzień starszy niż dziś"
             return;
-        } else if (parData > myToday) {
+        } else if (parData > myToday) { // jeśli dzień wybrany starszy niż dziś
 
             const d1_tommorow = new Date();
             d1_tommorow.setDate(d1_tommorow.getDate() + 1)
@@ -88,8 +90,10 @@ class FeedViewStore {
             this.pBlock_kor = false;
             this.kBlock_kor = false;
             this.pnBlock_kor = false;
+            this.textOpenHours = "Zmiany otwarte"
 
             if ( dateFnsFormat(d1_tommorow,'yyyy-MM-dd') === feedViewStore.startDate ) {
+                this.textOpenHours = ""
                 this.blockHours.forEach( item => {
                     if ( item.blkRamyCzasowe === "W" ) {
                         this.checkBlockadeEditHoursForTomorrow( item.blkTimeOfDay, item.blkHours);
@@ -194,7 +198,7 @@ class FeedViewStore {
             d1 > d2 ? this.pnBlock = true : this.pnBlock = false
         }
 
-        d1 > d2 ? this.textBlockadeHours += blkTimeOfDay + "(D):" + blkHours?.substring(0,5) + " " : this.textOpenHours += blkTimeOfDay + "(D):" + blkHours?.substring(0,5) + " "
+        d1 > d2 ? this.textBlockadeHours += blkTimeOfDay + "(W):" + blkHours?.substring(0,5) + " " : this.textOpenHours += blkTimeOfDay + "(W):" + blkHours?.substring(0,5) + " "
 
     }
 
