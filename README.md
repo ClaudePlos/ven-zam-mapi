@@ -57,3 +57,7 @@ IP: 0.144
 Developing - TEST:
 sudo docker build -t ven-zam-mapi .
 sudo docker run --name zam-mapi -d -p 8088:8080 ven-zam-mapi:latest
+
+
+production IP and port:
+https://192.168.0.144:8182/ > nzam.rekeep.pl
