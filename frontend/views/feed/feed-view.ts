@@ -70,7 +70,7 @@ export class FeedView extends View {
     @state()
     private gzList: GrupaZywionychVO[] = [];
 
-
+    @state()
     private binder = new Binder(this, StanZywionychNaDzienDTOModel);
 
     @state()
@@ -144,7 +144,7 @@ export class FeedView extends View {
                 <p style="font-size: 14px">Plan/Korekta:</p><p style="color:red;font-size: 14px"> Godz zablokowane: ${feedViewStore.textBlockadeHours}</p><p style="color:green;font-size: 14px"> Godz otwarte: ${feedViewStore.textOpenHours}</p>
             </vaadin-horizontal-layout>
                 
-            <vaadin-grid class="gridZamSum" style="width: 100%; height: 3%" theme="compact column-borders" all-rows-visible>
+            <vaadin-grid class="gridZamSum" slot="gridZamSum" style="width: 100%; height: 3%" theme="compact column-borders" all-rows-visible>
                 <vaadin-grid-column header="" width="48px"></vaadin-grid-column>
                 <vaadin-grid-column header="Razem: / Korekta + Plan" width="245px"></vaadin-grid-column>
                 
@@ -167,7 +167,8 @@ export class FeedView extends View {
                 
             
                 
-            <vaadin-grid class="gridZam" .items="${feedViewStore.stanyZywionychNaDzien}" style="width: 100%; height: 80%" theme="column-borders" all-rows-visible
+            <vaadin-grid id="gridZam" class="gridZam" .items="${feedViewStore.stanyZywionychNaDzien}" style="width: 100%; height: 80%" theme="column-borders" all-rows-visible
+                         @size-changed="${() => this.requestUpdate()}"
                          .detailsOpenedItems="${this.detailsOpenedItem}"
                          ${gridRowDetailsRenderer<StanZywionychNaDzienDTO>(
                                  (item) => html`
@@ -258,7 +259,7 @@ export class FeedView extends View {
     }
 
     private valueRendererO = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        model.item.obiadPlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${feedViewStore.oBlock}"
+        model.item.obiadPlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" id="${model.item.dietaNazwa}_O" .readonly="${feedViewStore.oBlock}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "", "o")}
                          @click=${(e: CustomEvent) => this.updateClickState(model.item, "")}
                value="${model.item.obiadPlanIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
@@ -272,7 +273,7 @@ export class FeedView extends View {
     }
 
     private valueRendererK = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        model.item.kolacjaPlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${feedViewStore.kBlock}"
+        model.item.kolacjaPlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" id="${model.item.dietaNazwa}_K" .readonly="${feedViewStore.kBlock}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "", "k")}
                          @click=${(e: CustomEvent) => this.updateClickState(model.item, "")}
                value="${model.item.kolacjaPlanIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
@@ -353,7 +354,19 @@ export class FeedView extends View {
     };
 
     async updateState( item: StanZywionychNaDzienDTO, value: number, comment : String, type: string){
-        if (type === "s") {item.sniadaniePlanIl = value as number}
+        if (type === "s") {
+            item.sniadaniePlanIl = value as number; item.obiadPlanIl = value as number; item.kolacjaPlanIl = value as number;
+
+                let numEl1 = item.dietaNazwa+"_O";
+                let numEl2 = item.dietaNazwa+"_K";
+                let e1 = document.getElementById(numEl1);
+                let e2 = document.getElementById(numEl2);
+                // @ts-ignore
+                e1.value = value as number;
+                // @ts-ignore
+                e2.value = value as number;
+
+        }
         else if (type === "2s") { item.drugieSniadaniePlanIl = value as number }
         else if (type === "o") { item.obiadPlanIl = value as number }
         else if (type === "p") { item.podwieczorekPlanIl = value as number }
@@ -382,11 +395,11 @@ export class FeedView extends View {
             this.sumPN += Number(item.posilekNocnyPlanIl) ? Number(item.posilekNocnyPlanIl) : 0;
 
             sumS_korL += Number(item.sniadanieKorIl) ? Number(item.sniadanieKorIl) : 0;
-            sumS2_kor += Number(item.drugieSniadanieKorIl) ? this.sumS2 + Number(item.drugieSniadanieKorIl) : 0;
-            sumO_korL += Number(item.obiadKorIl) ? this.sumO + Number(item.obiadKorIl) : 0;
-            sumP_korL += Number(item.podwieczorekKorIl) ? this.sumP + Number(item.podwieczorekKorIl) : 0;
-            sumK_korL += Number(item.kolacjaKorIl) ? this.sumK + Number(item.kolacjaKorIl) : 0;
-            sumPN_korL += Number(item.posilekNocnyKorIl) ?  this.sumPN + Number(item.posilekNocnyKorIl) : 0;
+            sumS2_kor += Number(item.drugieSniadanieKorIl) ? Number(item.drugieSniadanieKorIl) : 0;
+            sumO_korL += Number(item.obiadKorIl) ? Number(item.obiadKorIl) : 0;
+            sumP_korL += Number(item.podwieczorekKorIl) ? Number(item.podwieczorekKorIl) : 0;
+            sumK_korL += Number(item.kolacjaKorIl) ? Number(item.kolacjaKorIl) : 0;
+            sumPN_korL += Number(item.posilekNocnyKorIl) ? Number(item.posilekNocnyKorIl) : 0;
         })
 
         this.sumS_kor = this.sumS + sumS_korL
