@@ -61,3 +61,6 @@ sudo docker run --name zam-mapi -d -p 8088:8080 ven-zam-mapi:latest
 
 production IP and port:
 https://192.168.0.144:8182/ > nzam.rekeep.pl
+
+TODO:
+2. jak wpiszą w śniadanie jesden to kopiowanie na O i K

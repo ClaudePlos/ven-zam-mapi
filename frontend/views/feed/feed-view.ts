@@ -44,6 +44,10 @@ import StanZywionychNaDzienDTOModel
 
 import { appStore } from '../../stores/app-store';
 
+import {
+    columnFooterRenderer,
+} from '@vaadin/grid/lit.js';
+
 
 
 @customElement('feed-view')
@@ -135,8 +139,12 @@ export class FeedView extends View {
                   <span>${this.status}</span>
                 </span>
             </div>
+
+            <vaadin-horizontal-layout theme="spacing">
+                <p style="font-size: 14px">Plan/Korekta:</p><p style="color:red;font-size: 14px"> Godz zablokowane: ${feedViewStore.textBlockadeHours}</p><p style="color:green;font-size: 14px"> Godz otwarte: ${feedViewStore.textOpenHours}</p>
+            </vaadin-horizontal-layout>
                 
-            <vaadin-grid class="gridZamSum" style="width: 99%; height: 5%" theme="column-borders">
+            <vaadin-grid class="gridZamSum" style="width: 100%; height: 3%" theme="compact column-borders" all-rows-visible>
                 <vaadin-grid-column header="" width="48px"></vaadin-grid-column>
                 <vaadin-grid-column header="Razem: / Korekta + Plan" width="245px"></vaadin-grid-column>
                 
@@ -146,19 +154,20 @@ export class FeedView extends View {
                 <vaadin-grid-column header="${this.sumP}" width="123px"></vaadin-grid-column>
                 <vaadin-grid-column header="${this.sumK}" width="123px"></vaadin-grid-column>
                 <vaadin-grid-column header="${this.sumPN}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column  width="48px"></vaadin-grid-column>
                 
-                <vaadin-grid-column class="gridZamSumC1" style="color: red" header="${this.sumS_kor}" width="123px"></vaadin-grid-column>
-                <vaadin-grid-column ${columnHeaderRenderer(this.subHeaderRendererSumS2kor, [])} width="123px"></vaadin-grid-column>
-                <vaadin-grid-column ${columnHeaderRenderer(this.subHeaderRendererSumOkor, [])} width="123px"></vaadin-grid-column>
-                <vaadin-grid-column ${columnHeaderRenderer(this.subHeaderRendererSumPkor, [])} width="123px"></vaadin-grid-column>
-                <vaadin-grid-column ${columnHeaderRenderer(this.subHeaderRendererSumKkor, [])} width="123px"></vaadin-grid-column>
-                <vaadin-grid-column ${columnHeaderRenderer(this.subHeaderRendererSumPNkor, [])} width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="${this.sumS_kor}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="${this.sumS2_kor}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="${this.sumO_kor}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="${this.sumP_kor}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="${this.sumK_kor}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="${this.sumPN_kor}" width="123px"></vaadin-grid-column>
                 
             </vaadin-grid>
                 
             
                 
-            <vaadin-grid class="gridZam" .items="${feedViewStore.stanyZywionychNaDzien}" style="width: 100%; height: 80%" theme="column-borders"
+            <vaadin-grid class="gridZam" .items="${feedViewStore.stanyZywionychNaDzien}" style="width: 100%; height: 80%" theme="column-borders" all-rows-visible
                          .detailsOpenedItems="${this.detailsOpenedItem}"
                          ${gridRowDetailsRenderer<StanZywionychNaDzienDTO>(
                                  (item) => html`
@@ -178,26 +187,24 @@ export class FeedView extends View {
   
                 
                 <vaadin-grid-column-group header="Planowanie">
-                <vaadin-grid-column header="Ś" .renderer="${this.valueRendererS}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="Ś" .renderer="${this.valueRendererS}" ${columnFooterRenderer(this.membershipFooterRenderer, [])} width="123px"></vaadin-grid-column>
                 <vaadin-grid-column header="IIŚ" .renderer="${this.valueRendererIIS}" width="123px"></vaadin-grid-column>
                 <vaadin-grid-column header="O"   .renderer="${this.valueRendererO}" width="123px"></vaadin-grid-column>
                 <vaadin-grid-column header="P"   .renderer="${this.valueRendererP}" width="123px"></vaadin-grid-column>
                 <vaadin-grid-column header="K"   .renderer="${this.valueRendererK}" width="123px"></vaadin-grid-column>
                 <vaadin-grid-column header="PN"  .renderer="${this.valueRendererPN}" width="123px"></vaadin-grid-column>
-                    <vaadin-grid-column
+                    <vaadin-grid-column width="48px"
                             ${columnBodyRenderer<StanZywionychNaDzienDTO>(
                                     (item) => html`
-                                      <vaadin-button
-                                        theme="tertiary"
+                                      <vaadin-button 
+                                        theme="tertiary small"
                                         @click="${() => {
                                         const isOpened = this.detailsOpenedItem.includes(item);
                                         this.detailsOpenedItem = isOpened
                                                 ? this.detailsOpenedItem.filter((p) => p !== item)
                                                 : [...this.detailsOpenedItem, item];
                                     }}"
-              >
-                U
-              </vaadin-button>
+              >+</vaadin-button>
             `,
                                     []
                             )}
@@ -218,14 +225,9 @@ export class FeedView extends View {
     }
 
 
-    private subHeaderRendererSumSkor = () => { return html` <span style="color: red">${this.sumS2_kor}</span>`;};
-    private subHeaderRendererSumS2kor = () => { return html` <span style="color: red">${this.sumS2_kor}</span>`;};
-    private subHeaderRendererSumOkor = () => { return html` <span style="color: red">${this.sumO_kor}</span>`;};
-    private subHeaderRendererSumPkor = () => { return html` <span style="color: red">${this.sumP_kor}</span>`;};
-    private subHeaderRendererSumKkor = () => { return html` <span style="color: red">${this.sumK_kor}</span>`;};
-    private subHeaderRendererSumPNkor = () => { return html` <span style="color: red">${this.sumPN_kor}</span>`;};
-
-
+    private membershipFooterRenderer = () => {
+        return html`<vaadin-horizontal-layout theme="spacing">${this.sumS_kor}</vaadin-horizontal-layout>`;
+    };
 
 
     async gzChanged(e: CustomEvent) {
@@ -398,14 +400,12 @@ export class FeedView extends View {
     updateClickState( item: StanZywionychNaDzienDTO, typeOfFeed : String){
 
         if ( typeOfFeed === "kor" && this.czyKorekta === false) {
-            this.correctionActive()
-            const notification = Notification.show("Aktywuję korektę! Uwaga wartości zmienione na korekcie nie zostaną zapisane.", {position: 'middle', duration: 2000});
+            const notification = Notification.show("Aktywuj korektę! Uwaga wartości zmienione na korekcie nie zostaną zapisane.", {position: 'middle', duration: 2000});
             notification.setAttribute('theme', 'error');
         }
 
         if ( typeOfFeed === "" && this.czyKorekta === true) {
-            this.correctionActive()
-            const notification = Notification.show("Dezaktywuję korektę! Uwaga wartości zmienione na planie nie zostaną zapisane.", {position: 'middle', duration: 2000});
+            const notification = Notification.show("Dezaktywuj korektę! Uwaga wartości zmienione na planie nie zostaną zapisane.", {position: 'middle', duration: 2000});
             notification.setAttribute('theme', 'primary');
         }
 

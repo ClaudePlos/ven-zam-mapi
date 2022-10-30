@@ -55,10 +55,7 @@ vaadin-grid {
     zoom: 90%;
 }
 
-vaadin-grid-cell-content .sK {
+.gridZamSum  {
     color: red;
-}
-
-vaadin-grid-cell-content .gridZamSumC1 {
-    color: red;
+    background-color: yellow;
 }
