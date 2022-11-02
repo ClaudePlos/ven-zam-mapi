@@ -9,10 +9,12 @@ import NapZamBlockadeVO from "Frontend/generated/pl/kskowronski/data/entity/mapi
 class FeedViewStore {
 
     public startDate: string = dateFnsFormat(new Date(), 'yyyy-MM-dd');
+    public copyDate: string = dateFnsFormat(new Date(), 'yyyy-MM-dd');
     public idGZ: number = 0;
     public sortType: string = "lp";
 
     public stanyZywionychNaDzien: StanZywionychNaDzienDTO[] = [];
+    private stanyZywionychForCopy: StanZywionychNaDzienDTO[] = [];
 
     public blockHours: NapZamBlockadeVO[] = [];
 
@@ -42,6 +44,10 @@ class FeedViewStore {
         this.startDate = newDate;
         await this.checkBlockadeHours()
         await this.getStanyZywionychNaDzien()
+    }
+
+    async dateCopyChanged( newDate: string ) {
+        this.copyDate = newDate;
     }
 
     async getStanyZywionychNaDzien() {
@@ -201,6 +207,29 @@ class FeedViewStore {
         d1 > d2 ? this.textBlockadeHours += blkTimeOfDay + "(W):" + blkHours?.substring(0,5) + " " : this.textOpenHours += blkTimeOfDay + "(W):" + blkHours?.substring(0,5) + " "
 
     }
+
+
+    async copyStanZywForDay() {
+
+        const stanyZywionychForCopy = await StanyZywionychEndpoint.pobierzStanZywionychWdniuDlaGZ(feedViewStore.copyDate, this.idGZ, this.sortType);
+        this.stanyZywionychForCopy = stanyZywionychForCopy;
+
+        this.stanyZywionychForCopy.forEach( itemC => {
+            this.stanyZywionychNaDzien.forEach( item => {
+                if ( item.idDieta === itemC.idDieta ) {
+                    item.sniadaniePlanIl = itemC.sniadaniePlanIl;
+                    item.drugieSniadaniePlanIl = itemC.drugieSniadaniePlanIl;
+                    item.obiadPlanIl = itemC.obiadPlanIl;
+                    item.podwieczorekPlanIl = itemC.podwieczorekPlanIl;
+                    item.kolacjaPlanIl = itemC.kolacjaPlanIl;
+                    item.posilekNocnyPlanIl = itemC.posilekNocnyPlanIl;
+                }
+            })
+        })
+
+    }
+
+
 
 }
 

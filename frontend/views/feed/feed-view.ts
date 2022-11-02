@@ -3,6 +3,7 @@ import '@vaadin/combo-box'
 import '@vaadin/grid/vaadin-grid';
 import '@vaadin/grid/vaadin-grid-column-group.js';
 import './components/claude-date';
+import './components/date-copy';
 import '@vaadin/number-field';
 import '@vaadin/integer-field';
 import '@vaadin/vaadin-lumo-styles/vaadin-iconset';
@@ -13,16 +14,18 @@ import '@vaadin/checkbox';
 import '@vaadin/text-field';
 import '@vaadin/dialog';
 import '@vaadin/button';
+import '@vaadin/menu-bar';
+import '@vaadin/split-layout';
 
 
 import { html, render } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import {Notification} from "@vaadin/notification";
+import type { MenuBarItem, MenuBarItemSelectedEvent } from '@vaadin/menu-bar';
 import type { NotificationOpenedChangedEvent } from '@vaadin/notification';
 import { notificationRenderer } from '@vaadin/notification/lit.js';
 import type { NotificationLitRenderer } from '@vaadin/notification/lit.js';
-import { columnHeaderRenderer, gridRowDetailsRenderer, columnBodyRenderer } from '@vaadin/grid/lit.js';
-import type { GridActiveItemChangedEvent } from '@vaadin/grid';
+import { gridRowDetailsRenderer, columnBodyRenderer } from '@vaadin/grid/lit.js';
 import { View } from '../../views/view';
 import { Binder } from '@hilla/form';
 import { GridItemModel } from '@vaadin/grid';
@@ -90,6 +93,18 @@ export class FeedView extends View {
     @state() sumPN_kor: number = 0;
 
     @state()
+    private itemsRep = [
+        {
+            text: 'Raporty',
+            children: [
+                { text: 'Księga receptur' },{ text: 'Instagram' },
+                { component: 'hr' },{ text: 'By email' }, { text: 'Get link' },
+                { component: 'hr' },{ text: 'Set permissions' },
+            ],
+        },
+    ];
+
+    @state()
     private detailsOpenedItem: StanZywionychNaDzienDTO[] = [];
 
 
@@ -103,8 +118,8 @@ export class FeedView extends View {
         const { model } = this.binder;
 
         return html`
-            <div style="width: 99%; height: 100%; padding-left: 5px">
-            <div><claude-date></claude-date>
+            <div >
+            <vaadin-horizontal-layout theme="spacing padding" style="align-items: baseline; padding-top: inherit;"><claude-date></claude-date>
                 <vaadin-combo-box  label="Kierunek kosztów" theme="small"
                                    .items="${this.kkList}"
                                    @value-changed="${this.kkChanged}"
@@ -138,7 +153,16 @@ export class FeedView extends View {
                 <span theme="${this.styl}">
                   <span>${this.status}</span>
                 </span>
+                <vaadin-vertical-layout style="border-style: groove; padding-bottom: 10px; padding-left: 5px; padding-right: 5px;">
+                    <date-copy></date-copy>
+                    <vaadin-button theme="small" @click="${feedViewStore.copyStanZywForDay}">Plan</vaadin-button>
+                </vaadin-vertical-layout>
+                <vaadin-menu-bar theme="small" .items="${this.itemsRep}" @item-selected="${this.itemSelected}"></vaadin-menu-bar>
+            </vaadin-horizontal-layout>
             </div>
+                
+                
+            
 
             <vaadin-horizontal-layout theme="spacing">
                 <p style="font-size: 14px">Plan/Korekta:</p><p style="color:red;font-size: 14px"> Godz zablokowane: ${feedViewStore.textBlockadeHours}</p><p style="color:green;font-size: 14px"> Godz otwarte: ${feedViewStore.textOpenHours}</p>
@@ -485,5 +509,12 @@ export class FeedView extends View {
     }
 
 
+    itemSelected(e: MenuBarItemSelectedEvent) {
+
+        if ( e.detail.value.text === 'Księga receptur') {
+            window.open("onet.pl",'_blank');
+        }
+
+    }
 
 }
