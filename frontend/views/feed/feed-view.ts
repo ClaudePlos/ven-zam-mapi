@@ -74,7 +74,7 @@ export class FeedView extends View {
     private binder = new Binder(this, StanZywionychNaDzienDTOModel);
 
     @state()
-    private notificationOpened = false;
+    private notCommentsOpened = false;
 
     @state() sumS: number = 0;
     @state() sumS2: number = 0;
@@ -124,15 +124,15 @@ export class FeedView extends View {
                                    helper-text="Wybierz grupę żywionych"
                 ></vaadin-combo-box>
                 <vaadin-button theme="secondary small" @click=${this.save}>Zapisz</vaadin-button>
-                <vaadin-button theme="secondary error icon small" @click="${() => (this.notificationOpened = true)}" .disabled="${this.notificationOpened}">i</vaadin-button>
+                <vaadin-button theme="secondary error icon small" @click="${() => (this.notCommentsOpened = true)}" .disabled="${this.notCommentsOpened}">u</vaadin-button>
                 <vaadin-notification
                         duration="0"
                         position="top-stretch"
-                        .opened="${this.notificationOpened}"
+                        .opened="${this.notCommentsOpened}"
                         @opened-changed="${(e: NotificationOpenedChangedEvent) => {
-                            this.notificationOpened = e.detail.value;
+                            this.notCommentsOpened = e.detail.value;
                         }}"
-                        ${notificationRenderer(this.renderer, [])}
+                        ${notificationRenderer(this.rendererComments, [])}
                 ></vaadin-notification>
                 <vaadin-checkbox theme="small" .checked=${this.czyKorekta} label="Aktywuj korektę"  @click="${() => (this.correctionActive())}"></vaadin-checkbox>
                 <span theme="${this.styl}">
@@ -188,7 +188,7 @@ export class FeedView extends View {
   
                 
                 <vaadin-grid-column-group header="Planowanie">
-                <vaadin-grid-column header="Ś" .renderer="${this.valueRendererS}" ${columnFooterRenderer(this.membershipFooterRenderer, [])} width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="Ś" .renderer="${this.valueRendererS}" ${columnFooterRenderer(this.membershipFooterRenderer, [this.sumS_kor])} width="123px"></vaadin-grid-column>
                 <vaadin-grid-column header="IIŚ" .renderer="${this.valueRendererIIS}" width="123px"></vaadin-grid-column>
                 <vaadin-grid-column header="O"   .renderer="${this.valueRendererO}" width="123px"></vaadin-grid-column>
                 <vaadin-grid-column header="P"   .renderer="${this.valueRendererP}" width="123px"></vaadin-grid-column>
@@ -342,10 +342,13 @@ export class FeedView extends View {
         }
     }
 
-    renderer: NotificationLitRenderer = () => {
+    rendererComments: NotificationLitRenderer = () => {
         return html`
-      <vaadin-horizontal-layout theme="spacing" style="align-items: center;">
-        <div>Plan/Korekta:<p style="color:red"> Godz zablokowane: ${feedViewStore.textBlockadeHours}</p><p style="color:green"> Godz otwarte: ${feedViewStore.textOpenHours}</p></div>
+      <vaadin-horizontal-layout theme="spacing" >
+          <vaadin-grid .items="${feedViewStore.stanyZywionychNaDzien}" style="width: 1800px; height: 400px">
+              <vaadin-grid-column path="dietaNazwa" header="Dieta" width="300px" text-align="start"></vaadin-grid-column>
+              <vaadin-grid-column path="szUwagi" header="Uwagi" width="1450px" text-align="start"></vaadin-grid-column>
+          </vaadin-grid>
         <vaadin-button theme="tertiary-inline" @click="${this.close}" aria-label="Close">
           <vaadin-icon icon="lumo:cross"></vaadin-icon>
         </vaadin-button>
@@ -472,7 +475,7 @@ export class FeedView extends View {
     }
 
     private close() {
-        this.notificationOpened = false;
+        this.notCommentsOpened = false;
     }
 
 
