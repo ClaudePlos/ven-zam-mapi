@@ -123,7 +123,7 @@ export class FeedView extends View {
                                    label="Browser"
                                    helper-text="Wybierz grupę żywionych"
                 ></vaadin-combo-box>
-                <vaadin-button theme="secondary small" @click=${this.save}>Zapisz</vaadin-button>
+                <vaadin-button theme="primary" @click=${this.save}>Zapisz</vaadin-button>
                 <vaadin-button theme="secondary error icon small" @click="${() => (this.notCommentsOpened = true)}" .disabled="${this.notCommentsOpened}">u</vaadin-button>
                 <vaadin-notification
                         duration="0"
@@ -178,7 +178,13 @@ export class FeedView extends View {
                                 .value="${item.szUwagi}"
                                 @value-changed=${(e: CustomEvent) => this.updateState(item, 0, e.detail.value as string, "comment")}
                                 @click=${(e: CustomEvent) => this.updateClickState(item, "")}
-                                colspan="3">
+                                colspan="1"></vaadin-text-field>
+                              <vaadin-text-field
+                                      label="Uwagi Korekta" style="width:800px"
+                                      .value="${item.szUwagi}"
+                                      @value-changed=${(e: CustomEvent) => this.updateState(item, 0, e.detail.value as string, "comment")}
+                                      @click=${(e: CustomEvent) => this.updateClickState(item, "")}
+                                      colspan="3"></vaadin-text-field>
                             </vaadin-form-layout>
                           `,[])}
                         >
