@@ -168,7 +168,7 @@ export class FeedView extends View {
                 <p style="font-size: 14px">Plan/Korekta:</p><p style="color:red;font-size: 14px"> Godz zablokowane: ${feedViewStore.textBlockadeHours}</p><p style="color:green;font-size: 14px"> Godz otwarte: ${feedViewStore.textOpenHours}</p>
             </vaadin-horizontal-layout>
                 
-            <vaadin-grid class="gridZamSum" slot="gridZamSum" style="width: 100%; height: 3%" theme="compact column-borders" all-rows-visible>
+            <!--<vaadin-grid class="gridZamSum" slot="gridZamSum" style="width: 100%; height: 3%" theme="compact column-borders" all-rows-visible>
                 <vaadin-grid-column header="" width="48px"></vaadin-grid-column>
                 <vaadin-grid-column header="Razem: / Korekta + Plan" width="245px"></vaadin-grid-column>
                 
@@ -187,7 +187,7 @@ export class FeedView extends View {
                 <vaadin-grid-column header="${this.sumK_kor}" width="123px"></vaadin-grid-column>
                 <vaadin-grid-column header="${this.sumPN_kor}" width="123px"></vaadin-grid-column>
                 
-            </vaadin-grid>
+            </vaadin-grid> -->
                 
             
                 
@@ -214,16 +214,16 @@ export class FeedView extends View {
                         >
 
                 <vaadin-grid-column path="lp" width="48px"></vaadin-grid-column>
-                <vaadin-grid-column header="Dieta Nazwa" .renderer="${this.dietNameRenderer}" width="245px" resizable></vaadin-grid-column>
+                <vaadin-grid-column header="Dieta Nazwa" .renderer="${this.dietNameRenderer}" ${columnFooterRenderer(this.footerRendererDesc, [])} width="245px" resizable></vaadin-grid-column>
   
                 
                 <vaadin-grid-column-group header="Planowanie">
-                <vaadin-grid-column header="Ś" .renderer="${this.valueRendererS}" ${columnFooterRenderer(this.membershipFooterRenderer, [this.sumS_kor])} width="123px"></vaadin-grid-column>
-                <vaadin-grid-column header="IIŚ" .renderer="${this.valueRendererIIS}" width="123px"></vaadin-grid-column>
-                <vaadin-grid-column header="O"   .renderer="${this.valueRendererO}" width="123px"></vaadin-grid-column>
-                <vaadin-grid-column header="P"   .renderer="${this.valueRendererP}" width="123px"></vaadin-grid-column>
-                <vaadin-grid-column header="K"   .renderer="${this.valueRendererK}" width="123px"></vaadin-grid-column>
-                <vaadin-grid-column header="PN"  .renderer="${this.valueRendererPN}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="Ś" .renderer="${this.valueRendererS}" ${columnFooterRenderer(this.footerRendererSumS, [this.sumS])} width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="IIŚ" .renderer="${this.valueRendererIIS}" ${columnFooterRenderer(this.footerRendererSumS2, [this.sumS])} width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="O"   .renderer="${this.valueRendererO}" ${columnFooterRenderer(this.footerRendererSumO, [this.sumS])} width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="P"   .renderer="${this.valueRendererP}" ${columnFooterRenderer(this.footerRendererSumP, [this.sumS])} width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="K"   .renderer="${this.valueRendererK}" ${columnFooterRenderer(this.footerRendererSumK, [this.sumS])} width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="PN"  .renderer="${this.valueRendererPN}" ${columnFooterRenderer(this.footerRendererSumPN, [this.sumS])} width="123px"></vaadin-grid-column>
                     <vaadin-grid-column width="48px"
                             ${columnBodyRenderer<StanZywionychNaDzienDTO>(
                                     (item) => html`
@@ -244,21 +244,31 @@ export class FeedView extends View {
                 
 
                 <vaadin-grid-column-group class="gridCorrection" header="Korekta" >
-                <vaadin-grid-column header="Ś"   .renderer="${this.valueRendererS_kor}" width="123px"></vaadin-grid-column>
-                <vaadin-grid-column header="IIŚ" .renderer="${this.valueRendererIIS_kor}" width="123px"></vaadin-grid-column>
-                <vaadin-grid-column header="O"   .renderer="${this.valueRendererO_kor}" width="123px"></vaadin-grid-column>
-                <vaadin-grid-column header="P"   .renderer="${this.valueRendererP_kor}" width="123px"></vaadin-grid-column>
-                <vaadin-grid-column header="K"   .renderer="${this.valueRendererK_kor}" width="123px"></vaadin-grid-column>
-                <vaadin-grid-column header="PN"  .renderer="${this.valueRendererPN_kor}" width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="Ś"   .renderer="${this.valueRendererS_kor}" ${columnFooterRenderer(this.footerRendererSumS_k, [this.sumS_kor])}  width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="IIŚ" .renderer="${this.valueRendererIIS_kor}" ${columnFooterRenderer(this.footerRendererSumS2_k, [this.sumS2_kor])} width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="O"   .renderer="${this.valueRendererO_kor}" ${columnFooterRenderer(this.footerRendererSumO_k, [this.sumO_kor])} width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="P"   .renderer="${this.valueRendererP_kor}" ${columnFooterRenderer(this.footerRendererSumP_k, [this.sumP_kor])} width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="K"   .renderer="${this.valueRendererK_kor}" ${columnFooterRenderer(this.footerRendererSumK_k, [this.sumK_kor])} width="123px"></vaadin-grid-column>
+                <vaadin-grid-column header="PN"  .renderer="${this.valueRendererPN_kor}" ${columnFooterRenderer(this.footerRendererSumPN_k, [this.sumPN_kor])} width="123px"></vaadin-grid-column>
                 </vaadin-grid-column-group>
             </vaadin-grid>
     </div>`;
     }
 
 
-    private membershipFooterRenderer = () => {
-        return html`<vaadin-horizontal-layout theme="spacing">${this.sumS_kor}</vaadin-horizontal-layout>`;
-    };
+    private footerRendererDesc  = () => { return html`<span>Razem: / <span style="color: red">Korekta + Plan</span></span>`; }
+    private footerRendererSumS  = () => { return html`<span>${this.sumS}</span>`; }
+    private footerRendererSumS2 = () => { return html`<span>${this.sumS2}</span>`; }
+    private footerRendererSumO  = () => { return html`<span>${this.sumO}</span>`; }
+    private footerRendererSumP  = () => { return html`<span>${this.sumP}</span>`; }
+    private footerRendererSumK  = () => { return html`<span>${this.sumK}</span>`; }
+    private footerRendererSumPN = () => { return html`<span>${this.sumPN}</span>`; }
+    private footerRendererSumS_k  = () => { return html`<span style="color: red">${this.sumS_kor}</span>`; }
+    private footerRendererSumS2_k = () => { return html`<span style="color: red">${this.sumS2_kor}</span>`; }
+    private footerRendererSumO_k  = () => { return html`<span style="color: red">${this.sumO_kor}</span>`; }
+    private footerRendererSumP_k  = () => { return html`<span style="color: red">${this.sumP_kor}</span>`; }
+    private footerRendererSumK_k  = () => { return html`<span style="color: red">${this.sumK_kor}</span>`; }
+    private footerRendererSumPN_k = () => { return html`<span style="color: red">${this.sumPN_kor}</span>`; }
 
 
     async gzChanged(e: CustomEvent) {
