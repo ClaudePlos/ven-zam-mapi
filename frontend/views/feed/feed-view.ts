@@ -4,6 +4,7 @@ import '@vaadin/grid/vaadin-grid';
 import '@vaadin/grid/vaadin-grid-column-group.js';
 import './components/claude-date';
 import './components/date-copy';
+import './reports/rep-01';
 import '@vaadin/number-field';
 import '@vaadin/integer-field';
 import '@vaadin/vaadin-lumo-styles/vaadin-iconset';
@@ -17,11 +18,11 @@ import '@vaadin/button';
 import '@vaadin/menu-bar';
 import '@vaadin/split-layout';
 
-
+import type { GridActiveItemChangedEvent } from '@vaadin/grid';
 import { html, render } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import {Notification} from "@vaadin/notification";
-import type { MenuBarItem, MenuBarItemSelectedEvent } from '@vaadin/menu-bar';
+import type { MenuBarItemSelectedEvent } from '@vaadin/menu-bar';
 import type { NotificationOpenedChangedEvent } from '@vaadin/notification';
 import { notificationRenderer } from '@vaadin/notification/lit.js';
 import type { NotificationLitRenderer } from '@vaadin/notification/lit.js';
@@ -107,6 +108,9 @@ export class FeedView extends View {
     @state()
     private detailsOpenedItem: StanZywionychNaDzienDTO[] = [];
 
+    @state()
+    private selectedItems: StanZywionychNaDzienDTO | undefined;
+
 
     async firstUpdated() {
         const kkList = await KierunekKosztowEndpoint.findAllUserKK(appStore.user?.id);
@@ -118,8 +122,9 @@ export class FeedView extends View {
         const { model } = this.binder;
 
         return html`
-            <div >
-            <vaadin-horizontal-layout theme="spacing padding" style="align-items: baseline; padding-top: inherit;"><claude-date></claude-date>
+            <div><rep-01></rep-01>
+            <vaadin-horizontal-layout theme="spacing padding" style="align-items: baseline; padding-top: inherit;">
+                <claude-date></claude-date>
                 <vaadin-combo-box  label="Kierunek kosztów" theme="small"
                                    .items="${this.kkList}"
                                    @value-changed="${this.kkChanged}"
@@ -158,7 +163,9 @@ export class FeedView extends View {
                     <vaadin-button theme="small" @click="${feedViewStore.copyStanZywForDay}">Plan</vaadin-button>
                 </vaadin-vertical-layout>
                 <vaadin-menu-bar theme="small" .items="${this.itemsRep}" @item-selected="${this.itemSelected}"></vaadin-menu-bar>
+                <span>${this.selectedItems?.dietaNazwa}</span>
             </vaadin-horizontal-layout>
+
             </div>
                 
                 
@@ -193,6 +200,12 @@ export class FeedView extends View {
                 
             <vaadin-grid id="gridZam" class="gridZam" .items="${feedViewStore.stanyZywionychNaDzien}" style="width: 100%; height: 80%" theme="column-borders" all-rows-visible
                          @size-changed="${() => this.requestUpdate()}"
+                         @active-item-changed="${(e: GridActiveItemChangedEvent<StanZywionychNaDzienDTO>) => {
+                             const item = e.detail.value;
+                             if (item !== null) {
+                                 this.selectedItems = item;  
+                             }
+                         }}"
                          .detailsOpenedItems="${this.detailsOpenedItem}"
                          ${gridRowDetailsRenderer<StanZywionychNaDzienDTO>(
                                  (item) => html`
@@ -214,7 +227,8 @@ export class FeedView extends View {
                         >
 
                 <vaadin-grid-column path="lp" width="48px"></vaadin-grid-column>
-                <vaadin-grid-column header="Dieta Nazwa" .renderer="${this.dietNameRenderer}" ${columnFooterRenderer(this.footerRendererDesc, [])} width="245px" resizable></vaadin-grid-column>
+                <vaadin-grid-column header="Dieta Nazwa" .renderer="${this.dietNameRenderer}" ${columnFooterRenderer(this.footerRendererDesc, [])}
+                                    width="245px" resizable></vaadin-grid-column>
   
                 
                 <vaadin-grid-column-group header="Planowanie">
@@ -224,7 +238,7 @@ export class FeedView extends View {
                 <vaadin-grid-column header="P"   .renderer="${this.valueRendererP}" ${columnFooterRenderer(this.footerRendererSumP, [this.sumS])} width="123px"></vaadin-grid-column>
                 <vaadin-grid-column header="K"   .renderer="${this.valueRendererK}" ${columnFooterRenderer(this.footerRendererSumK, [this.sumS])} width="123px"></vaadin-grid-column>
                 <vaadin-grid-column header="PN"  .renderer="${this.valueRendererPN}" ${columnFooterRenderer(this.footerRendererSumPN, [this.sumS])} width="123px"></vaadin-grid-column>
-                    <vaadin-grid-column width="48px"
+                <vaadin-grid-column width="48px"
                             ${columnBodyRenderer<StanZywionychNaDzienDTO>(
                                     (item) => html`
                                       <vaadin-button 
@@ -235,7 +249,7 @@ export class FeedView extends View {
                                                 ? this.detailsOpenedItem.filter((p) => p !== item)
                                                 : [...this.detailsOpenedItem, item];
                                     }}"
-              >+</vaadin-button>
+                >+</vaadin-button>
             `,
                                     []
                             )}
@@ -252,7 +266,8 @@ export class FeedView extends View {
                 <vaadin-grid-column header="PN"  .renderer="${this.valueRendererPN_kor}" ${columnFooterRenderer(this.footerRendererSumPN_k, [this.sumPN_kor])} width="123px"></vaadin-grid-column>
                 </vaadin-grid-column-group>
             </vaadin-grid>
-    </div>`;
+    </div>
+        `;
     }
 
 
@@ -522,7 +537,7 @@ export class FeedView extends View {
     itemSelected(e: MenuBarItemSelectedEvent) {
 
         if ( e.detail.value.text === 'Księga receptur') {
-            window.open("onet.pl",'_blank');
+            feedViewStore.dialogRep01Change(true)
         }
 
     }

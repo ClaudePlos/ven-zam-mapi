@@ -35,6 +35,8 @@ class FeedViewStore {
     public kBlock_kor : boolean = false;
     public pnBlock_kor : boolean = false;
 
+    public dialogRep01 : boolean = false;
+
 
     constructor() {
         makeAutoObservable(this);
@@ -48,6 +50,10 @@ class FeedViewStore {
 
     async dateCopyChanged( newDate: string ) {
         this.copyDate = newDate;
+    }
+
+    async dialogRep01Change( value: boolean ) {
+        this.dialogRep01 = value;
     }
 
     async getStanyZywionychNaDzien() {
