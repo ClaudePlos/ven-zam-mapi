@@ -1,17 +1,18 @@
-import { css, html, LitElement } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { html } from 'lit';
+import { customElement } from 'lit/decorators.js';
 
 import '@vaadin/button';
 import '@vaadin/dialog';
 import '@vaadin/vertical-layout';
 import type { DialogOpenedChangedEvent } from '@vaadin/dialog';
-import { dialogFooterRenderer, dialogRenderer } from '@vaadin/dialog/lit.js';
+import { dialogRenderer } from '@vaadin/dialog/lit.js';
 import { applyTheme } from 'Frontend/generated/theme';
 import { feedViewStore } from '../feed-view-store';
+import { repJadlospisStore } from '../reports/rep-jadlospis-store';
 import {MobxLitElement} from "@adobe/lit-mobx";
 
-@customElement('rep-01')
-export class Rep01 extends MobxLitElement {
+@customElement('rep-jadlospis')
+export class RepJadlospis extends MobxLitElement {
 
     protected createRenderRoot() {
         const root = super.createRenderRoot();
@@ -26,8 +27,8 @@ export class Rep01 extends MobxLitElement {
                     header-title="Raport"
                     resizable
                     draggable
-                    .opened="${feedViewStore.dialogRep01}"
-                    @opened-changed="${(e: DialogOpenedChangedEvent) => (feedViewStore.dialogRep01Change(e.detail.value))}"
+                    .opened="${repJadlospisStore.dialogRep01}"
+                    @opened-changed="${(e: DialogOpenedChangedEvent) => (repJadlospisStore.dialogRep01Change(e.detail.value))}"
                     }
                     ${dialogRenderer(this.renderDialog, [])}
             >
@@ -37,12 +38,15 @@ export class Rep01 extends MobxLitElement {
 
 
     private renderDialog = () => html`
-    <vaadin-vertical-layout style="align-items: stretch; width: 18rem; max-width: 100%;">
-      <vaadin-text-field label="First name"></vaadin-text-field>
-      <vaadin-text-field label="Last name"></vaadin-text-field>
+    <vaadin-vertical-layout style="align-items: stretch; width: 18rem; max-width: 100%; width: 1400px; height: 800px;">
+        <span>Dieta: ${feedViewStore.selectedItem?.dietaNazwa} Na dzień: ${feedViewStore.startDate}</span>
+
+        <div class="jadlospisTable">
+            <table id="jadlospisTable"></table>
+        </div>
+        
     </vaadin-vertical-layout>
   `;
-
 
 
 }

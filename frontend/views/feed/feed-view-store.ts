@@ -1,6 +1,6 @@
 import dateFnsFormat from "date-fns/format";
 import {makeAutoObservable} from "mobx";
-import {StanyZywionychEndpoint} from "Frontend/generated/endpoints";
+import {JadlospisEndpoint, StanyZywionychEndpoint} from "Frontend/generated/endpoints";
 import StanZywionychNaDzienDTO from "Frontend/generated/pl/kskowronski/data/entity/mapi/StanZywionychNaDzienDTO";
 import {Notification} from "@vaadin/notification";
 import dateFnsParse from "date-fns/parse";
@@ -35,7 +35,8 @@ class FeedViewStore {
     public kBlock_kor : boolean = false;
     public pnBlock_kor : boolean = false;
 
-    public dialogRep01 : boolean = false;
+
+    public selectedItem: StanZywionychNaDzienDTO | undefined;
 
 
     constructor() {
@@ -52,8 +53,10 @@ class FeedViewStore {
         this.copyDate = newDate;
     }
 
-    async dialogRep01Change( value: boolean ) {
-        this.dialogRep01 = value;
+
+    async selectItemChange( value: StanZywionychNaDzienDTO ) {
+        this.selectedItem = value;
+        Notification.show(this.selectedItem.dietaNazwa + "")
     }
 
     async getStanyZywionychNaDzien() {

@@ -4,7 +4,8 @@ import '@vaadin/grid/vaadin-grid';
 import '@vaadin/grid/vaadin-grid-column-group.js';
 import './components/claude-date';
 import './components/date-copy';
-import './reports/rep-01';
+import './reports/rep-jadlospis';
+import './reports/rep-jadlospispro';
 import '@vaadin/number-field';
 import '@vaadin/integer-field';
 import '@vaadin/vaadin-lumo-styles/vaadin-iconset';
@@ -30,7 +31,11 @@ import { gridRowDetailsRenderer, columnBodyRenderer } from '@vaadin/grid/lit.js'
 import { View } from '../../views/view';
 import { Binder } from '@hilla/form';
 import { GridItemModel } from '@vaadin/grid';
+
 import { feedViewStore } from './feed-view-store';
+import { repJadlospisStore } from './reports/rep-jadlospis-store';
+import { repJadlospisproStore } from './reports/rep-jadlospispro-store';
+
 import KierunekKosztowVO from "Frontend/generated/pl/kskowronski/data/entity/mapi/KierunekKosztowVO";
 // @ts-ignore
 import {
@@ -41,13 +46,10 @@ import {
 } from "Frontend/generated/endpoints";
 import GrupaZywionychVO from "Frontend/generated/pl/kskowronski/data/entity/mapi/GrupaZywionychVO";
 import StanZywionychNaDzienDTO from "Frontend/generated/pl/kskowronski/data/entity/mapi/StanZywionychNaDzienDTO";
-
 import "./feed-view.css"
 import StanZywionychNaDzienDTOModel
     from "Frontend/generated/pl/kskowronski/data/entity/mapi/StanZywionychNaDzienDTOModel";
-
 import { appStore } from '../../stores/app-store';
-
 import {
     columnFooterRenderer,
 } from '@vaadin/grid/lit.js';
@@ -98,7 +100,7 @@ export class FeedView extends View {
         {
             text: 'Raporty',
             children: [
-                { text: 'Księga receptur' },{ text: 'Instagram' },
+                { text: 'Księga receptur' },{ text: 'Księga receptur PRO' },
                 { component: 'hr' },{ text: 'By email' }, { text: 'Get link' },
                 { component: 'hr' },{ text: 'Set permissions' },
             ],
@@ -107,10 +109,6 @@ export class FeedView extends View {
 
     @state()
     private detailsOpenedItem: StanZywionychNaDzienDTO[] = [];
-
-    @state()
-    private selectedItems: StanZywionychNaDzienDTO | undefined;
-
 
     async firstUpdated() {
         const kkList = await KierunekKosztowEndpoint.findAllUserKK(appStore.user?.id);
@@ -122,7 +120,9 @@ export class FeedView extends View {
         const { model } = this.binder;
 
         return html`
-            <div><rep-01></rep-01>
+            <div>
+                <rep-jadlospis></rep-jadlospis>
+                <rep-jadlospispro></rep-jadlospispro>
             <vaadin-horizontal-layout theme="spacing padding" style="align-items: baseline; padding-top: inherit;">
                 <claude-date></claude-date>
                 <vaadin-combo-box  label="Kierunek kosztów" theme="small"
@@ -163,7 +163,7 @@ export class FeedView extends View {
                     <vaadin-button theme="small" @click="${feedViewStore.copyStanZywForDay}">Plan</vaadin-button>
                 </vaadin-vertical-layout>
                 <vaadin-menu-bar theme="small" .items="${this.itemsRep}" @item-selected="${this.itemSelected}"></vaadin-menu-bar>
-                <span>${this.selectedItems?.dietaNazwa}</span>
+                <span>${feedViewStore.selectedItem?.dietaNazwa}</span>
             </vaadin-horizontal-layout>
 
             </div>
@@ -203,7 +203,7 @@ export class FeedView extends View {
                          @active-item-changed="${(e: GridActiveItemChangedEvent<StanZywionychNaDzienDTO>) => {
                              const item = e.detail.value;
                              if (item !== null) {
-                                 this.selectedItems = item;  
+                                 feedViewStore.selectItemChange(item);  
                              }
                          }}"
                          .detailsOpenedItems="${this.detailsOpenedItem}"
@@ -536,8 +536,10 @@ export class FeedView extends View {
 
     itemSelected(e: MenuBarItemSelectedEvent) {
 
-        if ( e.detail.value.text === 'Księga receptur') {
-            feedViewStore.dialogRep01Change(true)
+        if ( e.detail.value.text === 'Księga receptur' ) {
+            repJadlospisStore.dialogRep01Change(true)
+        } else if ( e.detail.value.text === 'Księga receptur PRO' ) {
+            repJadlospisproStore.dialogRepJadlospisProChange(true)
         }
 
     }
