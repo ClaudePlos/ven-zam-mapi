@@ -40,7 +40,7 @@ export class RepJadlospispro extends MobxLitElement {
     private renderDialog = () => html`
     <vaadin-vertical-layout style="align-items: stretch; width: 18rem; max-width: 100%; width: 1400px; height: 800px;">
         <span>Dieta: ${feedViewStore.selectedItem?.dietaNazwa} Na dzień: ${feedViewStore.startDate}</span>
-
+        <vaadin-button theme="secondary error icon small" @click="${() => (repJadlospisproStore.genPDF())}">pdf</vaadin-button>
         <div class="jadlospisTable"><table id="jadlospisTable"></table></div>
         
     </vaadin-vertical-layout>

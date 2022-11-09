@@ -129,6 +129,8 @@
     "@vaadin/virtual-list": "23.2.4",
     "construct-style-sheets-polyfill": "3.1.0",
     "date-fns": "^2.28.0",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.5.25",
     "line-awesome": "1.3.0",
     "lit": "2.3.0",
     "mobx": "^6.3.5"
@@ -277,7 +279,9 @@
     "@hilla/generator-typescript-plugin-client": "$@hilla/generator-typescript-plugin-client",
     "@hilla/generator-typescript-utils": "$@hilla/generator-typescript-utils",
     "@hilla/generator-typescript-plugin-backbone": "$@hilla/generator-typescript-plugin-backbone",
-    "@hilla/generator-typescript-cli": "$@hilla/generator-typescript-cli"
+    "@hilla/generator-typescript-cli": "$@hilla/generator-typescript-cli",
+    "jspdf": "$jspdf",
+    "jspdf-autotable": "$jspdf-autotable"
   },
   "vaadin": {
     "dependencies": {
@@ -422,6 +426,6 @@
       "workbox-core": "6.5.0",
       "workbox-precaching": "6.5.0"
     },
-    "hash": "a71c9467c24f2afec12ea3a3e1b549932eae71b10cd57c6877e0639afc0829d2"
+    "hash": "1b15f1dd96bf775ca733a16d6981674206653270460a8af38e721b377a993327"
   }
 }
