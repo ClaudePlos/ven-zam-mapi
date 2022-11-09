@@ -85,7 +85,7 @@ class RepJadlospisproStore {
 
                 var tdHead = document.createElement('TD');
             // @ts-ignore
-                tdHead.width = '175';
+                tdHead.width = '575';
                 tdHead.setAttribute("style", "font-weight:bold");
                 tdHead.appendChild(document.createTextNode("Składniki"));
                 trHead.appendChild(tdHead);

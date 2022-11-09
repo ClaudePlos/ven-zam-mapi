@@ -146,8 +146,8 @@ public class MapiService {
         try {
 
             Query query =  em.createNativeQuery("SELECT SKL.LP,\n" +
-                    "SKL.ASORTYMENT,\n" +
-                    "A.Asortyment,\n" +
+                    "SKL.ASORTYMENT as1,\n" +
+                    "A.Asortyment as2,\n" +
                     "SKL.ILOSC,\n" +
                     "SKL.JM_KOD,\n" +
                     "A.ALERGENY\n" +
