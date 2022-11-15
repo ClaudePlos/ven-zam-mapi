@@ -233,6 +233,12 @@ class FeedViewStore {
                     item.podwieczorekPlanIl = itemC.podwieczorekPlanIl;
                     item.kolacjaPlanIl = itemC.kolacjaPlanIl;
                     item.posilekNocnyPlanIl = itemC.posilekNocnyPlanIl;
+
+                    // to refresh view
+                    const eO = document.getElementById(item.dietaNazwa+"_O") as HTMLElement | null;
+                    // @ts-ignore
+                    eO.value = itemC.obiadPlanIl;
+
                 }
             })
         })
