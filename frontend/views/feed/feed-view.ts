@@ -110,6 +110,9 @@ export class FeedView extends View {
     @state()
     private detailsOpenedItem: StanZywionychNaDzienDTO[] = [];
 
+    @state()
+    private dietName : string | undefined = "";
+
     async firstUpdated() {
         const kkList = await KierunekKosztowEndpoint.findAllUserKK(appStore.user?.id);
         this.kkList = kkList;
@@ -134,7 +137,7 @@ export class FeedView extends View {
                                    label="Browser"
                                    helper-text="Wybierz kierunk koszótw"
                 ></vaadin-combo-box>
-                <vaadin-combo-box  label="Grupa żywionych / Obiekt" theme="small"
+                <vaadin-combo-box  label="Grupa żywionych / Oddział" theme="small"
                                    .items="${this.gzList}"
                                    @value-changed="${this.gzChanged}"
                                    item-label-path="grupaZywionych"
@@ -158,12 +161,11 @@ export class FeedView extends View {
                 <span theme="${this.styl}">
                   <span>${this.status}</span>
                 </span>
-                <vaadin-vertical-layout style="border-style: groove; padding-bottom: 10px; padding-left: 5px; padding-right: 5px;">
+                <vaadin-horizontal-layout style="border-style: groove; padding-bottom: 5px; padding-left: 5px; padding-right: 5px; display: block">
                     <date-copy></date-copy>
                     <vaadin-button theme="small" @click="${feedViewStore.copyStanZywForDay}">Plan</vaadin-button>
-                </vaadin-vertical-layout>
+                </vaadin-horizontal-layout>
                 <vaadin-menu-bar theme="small" .items="${this.itemsRep}" @item-selected="${this.itemSelected}"></vaadin-menu-bar>
-                <span>${feedViewStore.selectedItem?.dietaNazwa}</span>
             </vaadin-horizontal-layout>
 
             </div>
@@ -173,6 +175,7 @@ export class FeedView extends View {
 
             <vaadin-horizontal-layout theme="spacing">
                 <p style="font-size: 14px">Plan/Korekta:</p><p style="color:red;font-size: 14px"> Godz zablokowane: ${feedViewStore.textBlockadeHours}</p><p style="color:green;font-size: 14px"> Godz otwarte: ${feedViewStore.textOpenHours}</p>
+                <p style="font-size: 14px">Zaznaczona dieta: ${this.dietName}</p>
             </vaadin-horizontal-layout>
                 
             <!--<vaadin-grid class="gridZamSum" slot="gridZamSum" style="width: 100%; height: 3%" theme="compact column-borders" all-rows-visible>
@@ -204,6 +207,7 @@ export class FeedView extends View {
                              const item = e.detail.value;
                              if (item !== null) {
                                  feedViewStore.selectItemChange(item);  
+                                 this.dietName = item.dietaNazwa
                              }
                          }}"
                          .detailsOpenedItems="${this.detailsOpenedItem}"
@@ -300,14 +304,14 @@ export class FeedView extends View {
     // plan
 
     private valueRendererS = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        model.item.sniadaniePlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${feedViewStore.sBlock}"
+        model.item.sniadaniePlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" id="${model.item.dietaNazwa}_S" .readonly="${feedViewStore.sBlock}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "", "s")} 
                          @click=${(e: CustomEvent) => this.updateClickState(model.item, "")}                                                                        
                value="${model.item.sniadaniePlanIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
     }
 
     private valueRendererIIS = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        model.item.drugieSniadaniePlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${feedViewStore.s2Block}"
+        model.item.drugieSniadaniePlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" id="${model.item.dietaNazwa}_2s" .readonly="${feedViewStore.s2Block}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "", "2s")}
                          @click=${(e: CustomEvent) => this.updateClickState(model.item, "")}                                                                      
                value="${model.item.drugieSniadaniePlanIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
@@ -321,7 +325,7 @@ export class FeedView extends View {
     }
 
     private valueRendererP = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        model.item.podwieczorekPlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${feedViewStore.pBlock}"
+        model.item.podwieczorekPlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" id="${model.item.dietaNazwa}_P" .readonly="${feedViewStore.pBlock}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "", "p")}
                          @click=${(e: CustomEvent) => this.updateClickState(model.item, "")}
                value="${model.item.podwieczorekPlanIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);
@@ -335,7 +339,7 @@ export class FeedView extends View {
     }
 
     private valueRendererPN = (root: HTMLElement, _: HTMLElement, model: GridItemModel<StanZywionychNaDzienDTO>) => {
-        model.item.posilekNocnyPlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" .readonly="${feedViewStore.pnBlock}"
+        model.item.posilekNocnyPlanIl !== undefined ? render(html` <vaadin-integer-field theme="small" class="field-plan" id="${model.item.dietaNazwa}_PN" .readonly="${feedViewStore.pnBlock}"
             has-controls @value-changed=${(e: CustomEvent) => this.updateState(model.item, e.detail.value as number, "", "pn")}
                          @click=${(e: CustomEvent) => this.updateClickState(model.item, "")}
                value="${model.item.posilekNocnyPlanIl as number}" ></vaadin-integer-field>`, root) : render(html``,root);

@@ -1,6 +1,6 @@
 import dateFnsFormat from "date-fns/format";
 import {makeAutoObservable} from "mobx";
-import {JadlospisEndpoint, StanyZywionychEndpoint} from "Frontend/generated/endpoints";
+import {StanyZywionychEndpoint} from "Frontend/generated/endpoints";
 import StanZywionychNaDzienDTO from "Frontend/generated/pl/kskowronski/data/entity/mapi/StanZywionychNaDzienDTO";
 import {Notification} from "@vaadin/notification";
 import dateFnsParse from "date-fns/parse";
