@@ -417,17 +417,20 @@ export class FeedView extends View {
 
     async updateState( item: StanZywionychNaDzienDTO, value: number, comment : String, type: string){
         if (type === "s") {
-            item.sniadaniePlanIl = value as number; item.obiadPlanIl = value as number; item.kolacjaPlanIl = value as number;
+            item.sniadaniePlanIl = value as number;
+            //item.drugieSniadaniePlanIl = value as number;
+            item.obiadPlanIl = value as number;
+            //item.podwieczorekPlanIl = value as number;
+            item.kolacjaPlanIl = value as number;
+            //item.posilekNocnyPlanIl = value as number;
 
-                let numEl1 = item.dietaNazwa+"_O";
-                let numEl2 = item.dietaNazwa+"_K";
-                let e1 = document.getElementById(numEl1);
-                let e2 = document.getElementById(numEl2);
-                // @ts-ignore
-                e1.value = value as number;
-                // @ts-ignore
-                e2.value = value as number;
-
+            //let e2s = document.getElementById(item.dietaNazwa+"_2s");
+            let eO = document.getElementById(item.dietaNazwa+"_O");
+            let eK = document.getElementById(item.dietaNazwa+"_K");
+            // @ts-ignore
+            eO.value = value as number;
+            // @ts-ignore
+            eK.value = value as number;
         }
         else if (type === "2s") { item.drugieSniadaniePlanIl = value as number }
         else if (type === "o") { item.obiadPlanIl = value as number }
