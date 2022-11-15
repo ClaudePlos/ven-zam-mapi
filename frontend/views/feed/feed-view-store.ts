@@ -220,12 +220,13 @@ class FeedViewStore {
 
     async copyStanZywForDay() {
 
-        const stanyZywionychForCopy = await StanyZywionychEndpoint.pobierzStanZywionychWdniuDlaGZ(feedViewStore.copyDate, this.idGZ, this.sortType);
-        this.stanyZywionychForCopy = stanyZywionychForCopy;
+        const stanyZywionychForCopy = await StanyZywionychEndpoint.pobierzStanZywionychWdniuDlaGZ(feedViewStore.copyDate, feedViewStore.idGZ, feedViewStore.sortType);
+        feedViewStore.stanyZywionychForCopy = stanyZywionychForCopy;
 
-        this.stanyZywionychForCopy.forEach( itemC => {
-            this.stanyZywionychNaDzien.forEach( item => {
+        feedViewStore.stanyZywionychForCopy.forEach( itemC => {
+            feedViewStore.stanyZywionychNaDzien.forEach( item => {
                 if ( item.idDieta === itemC.idDieta ) {
+                    item.dataChanged = true;
                     item.sniadaniePlanIl = itemC.sniadaniePlanIl;
                     item.drugieSniadaniePlanIl = itemC.drugieSniadaniePlanIl;
                     item.obiadPlanIl = itemC.obiadPlanIl;
