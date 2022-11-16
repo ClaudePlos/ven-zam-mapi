@@ -5,7 +5,7 @@ import '@vaadin/button';
 import '@vaadin/dialog';
 import '@vaadin/vertical-layout';
 import type { DialogOpenedChangedEvent } from '@vaadin/dialog';
-import { dialogRenderer } from '@vaadin/dialog/lit.js';
+import { dialogRenderer, dialogHeaderRenderer } from '@vaadin/dialog/lit.js';
 import { applyTheme } from 'Frontend/generated/theme';
 import { feedViewStore } from '../feed-view-store';
 import { repJadlospisStore } from '../reports/rep-jadlospis-store';
@@ -30,6 +30,14 @@ export class RepJadlospis extends MobxLitElement {
                     .opened="${repJadlospisStore.dialogRep01}"
                     @opened-changed="${(e: DialogOpenedChangedEvent) => (repJadlospisStore.dialogRep01Change(e.detail.value))}"
                     }
+                    ${dialogHeaderRenderer(
+                            () => html`
+                            <vaadin-button theme="tertiary" @click="${() => (repJadlospisStore.dialogRep01 = false)}">
+                              <vaadin-icon icon="lumo:cross"></vaadin-icon>
+                            </vaadin-button>
+                          `,
+                            []
+                    )}
                     ${dialogRenderer(this.renderDialog, [])}
             >
             </vaadin-dialog>

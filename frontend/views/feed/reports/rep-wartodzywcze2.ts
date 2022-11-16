@@ -5,7 +5,7 @@ import '@vaadin/button';
 import '@vaadin/dialog';
 import '@vaadin/vertical-layout';
 import type { DialogOpenedChangedEvent } from '@vaadin/dialog';
-import { dialogRenderer } from '@vaadin/dialog/lit.js';
+import { dialogRenderer, dialogHeaderRenderer } from '@vaadin/dialog/lit.js';
 import { applyTheme } from 'Frontend/generated/theme';
 import { feedViewStore } from '../feed-view-store';
 import { repWartodzywcze2Store } from '../reports/rep-wartodzywcze2-store';
@@ -30,6 +30,14 @@ export class RepWartodzywcze2 extends MobxLitElement {
                     .opened="${repWartodzywcze2Store.dialogRepWartodzywcze2}"
                     @opened-changed="${(e: DialogOpenedChangedEvent) => (repWartodzywcze2Store.dialogRepWartOdzywczaChange(e.detail.value))}"
                     }
+                    ${dialogHeaderRenderer(
+                            () => html`
+                            <vaadin-button theme="tertiary" @click="${() => (repWartodzywcze2Store.dialogRepWartodzywcze2 = false)}">
+                              <vaadin-icon icon="lumo:cross"></vaadin-icon>
+                            </vaadin-button>
+                          `,
+                            []
+                    )}
                     ${dialogRenderer(this.renderDialog, [])}
             >
             </vaadin-dialog>

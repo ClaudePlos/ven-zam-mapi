@@ -290,6 +290,30 @@ class RepJadlospisproStore {
 
     }
 
+    // @ts-ignore
+    async more(items){
+
+        var moreText = document.getElementById(items.id.substr(1));
+        var a = document.getElementById(items.id);
+
+        // @ts-ignore
+        var zmienna = a.innerHTML;
+
+        if (zmienna === "Ukryj") {
+            console.log("if");
+            // @ts-ignore
+            a.innerHTML = "Pokaż skład";
+            // @ts-ignore
+            moreText.style.display = "none";
+        } else {
+            console.log("else");
+            // @ts-ignore
+            a.innerHTML = "Ukryj";
+            // @ts-ignore
+            moreText.style.display = "contents";
+        }
+    }
+
     async genPDF() {
         const readyToExport = this.listJadlospis;
         const doc = new jsPDF('l', 'mm', [297, 210])
