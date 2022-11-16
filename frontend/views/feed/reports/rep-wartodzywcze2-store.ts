@@ -8,6 +8,7 @@ import {Notification} from "@vaadin/notification";
 import ColumnNameWskaznikiOdzywcze
     from "Frontend/generated/pl/kskowronski/data/entity/mapi/reports/ColumnNameWskaznikiOdzywcze";
 import JadlospisViewVO from "Frontend/generated/pl/kskowronski/data/entity/mapi/JadlospisViewVO";
+import { repGlobal} from "./rep-global"
 
 
 
@@ -268,17 +269,17 @@ class RepWartodzywcze2Store {
         doc.setLanguage('pl')
 
         const cellName: string[] = ['Dieta Kod', 'Dieta Nazwa', 'Data'];
-        const cellRow: string[]  = [];
         const cellValues: []  = [];
 
         this.listCellName.forEach(  item => {
-            cellName.push(  this.convertPLtoUStxt( item.columnName as string) )
+            cellName.push(  repGlobal.convertPLtoUStxt( item.columnName as string) )
         });
 
         this.listJadlospis.forEach( item => {
-            cellRow.push( this.convertPLtoUStxt(item.dietaKod as string) )
-            cellRow.push( this.convertPLtoUStxt(item.dietaNazwa as string) )
-            cellRow.push( this.convertPLtoUStxt(item.dObr as string) )
+            const cellRow: string[]  = [];
+            cellRow.push( repGlobal.convertPLtoUStxt(item.dietaKod as string) )
+            cellRow.push( repGlobal.convertPLtoUStxt(item.dietaNazwa as string) )
+            cellRow.push( repGlobal.convertPLtoUStxt(item.dObr as string) )
             // @ts-ignore
             cellRow.push( item.w1 )
             // @ts-ignore
@@ -332,20 +333,7 @@ class RepWartodzywcze2Store {
         doc.save('wart_odzywcze.pdf')
     }
 
-    convertPLtoUStxt( value : string ) {
-        return value.replace("ą","a")
-            .replace("ć","c")
-            .replace("ę","e")
-            .replace("ł","l")
-            .replace("ń","n")
-            .replace("ó","o")
-            .replace("ś","s")
-            .replace("ź","z")
-            .replace("ż","z")
-            .replace("Ł","L")
-            .replace("ół","ol")
 
-    }
 }
 
 

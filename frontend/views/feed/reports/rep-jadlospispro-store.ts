@@ -10,6 +10,7 @@ import JadlospisSkladnikiViewVO
     from "Frontend/generated/pl/kskowronski/data/entity/mapi/reports/JadlospisSkladnikiViewVO";
 import {Notification} from "@vaadin/notification";
 import AlergenyDTO from "Frontend/generated/pl/kskowronski/data/entity/mapi/reports/AlergenyDTO";
+import { repGlobal} from "./rep-global"
 
 
 class RepJadlospisproStore {
@@ -341,26 +342,40 @@ class RepJadlospisproStore {
     }
 
     async genPDF() {
-        const readyToExport = this.listJadlospis;
+
         const doc = new jsPDF('l', 'mm', [297, 210])
         const cellName = ['LP', 'Posilek Kod', 'Danie / Alergeny','Gramatura','jm Gramatura Dania','Skladniki'];
-        const cellRow: string[]  = [];
         const cellValues: []  = [];
 
-        this.listJadlospis.forEach( item => {
+        this.listJadlospis.sort((obj1, obj2) =>{
+            // @ts-ignore
+            if (obj1.lp > obj2.lp) {
+                return 1;
+            }
 
             // @ts-ignore
+            if (obj1.lp < obj2.lp) {
+                return -1;
+            }
+
+            return 0;
+        })
+
+        this.listJadlospis.forEach( item => {
+            const cellRow: string[]  = [];
+            // @ts-ignore
             cellRow.push( item.lp as string )
-            cellRow.push( item.posilekKod as string )
-            cellRow.push( item.nazwaSkladnik + " " + item.alergenyPozycjiJadlospisu as string )
-            cellRow.push( item.gramatura as string )
-            cellRow.push( item.jmGramaturaDania as string )
+            cellRow.push( repGlobal.convertPLtoUStxt(item.posilekKod as string) )
+            cellRow.push( repGlobal.convertPLtoUStxt(item.nazwaSkladnik + " " + item.alergenyPozycjiJadlospisu as string) )
+            cellRow.push( repGlobal.convertPLtoUStxt(item.gramatura as string) )
+            cellRow.push( repGlobal.convertPLtoUStxt(item.jmGramaturaDania as string) )
             // @ts-ignore
             cellRow.push( "TODO")
             // @ts-ignore
             cellValues.push(cellRow)
-
         });
+
+        console.log(cellValues)
 
 
         autoTable(doc, { html: '#jadlospisTable' })
