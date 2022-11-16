@@ -369,21 +369,101 @@ class RepJadlospisproStore {
             cellRow.push( repGlobal.convertPLtoUStxt(item.nazwaSkladnik + " " + item.alergenyPozycjiJadlospisu as string) )
             cellRow.push( repGlobal.convertPLtoUStxt(item.gramatura as string) )
             cellRow.push( repGlobal.convertPLtoUStxt(item.jmGramaturaDania as string) )
+
+
+            var asortyment = '';
+            var skladnik = '';
+            var ilosc = '';
+            var jmKod = '';
+            var sklad = '';
+            var alergeny = '';
+            for (var j in item.listAsortymentyDaniaSkladniki) {
+
+                // @ts-ignore
+                if (asortyment != item.listAsortymentyDaniaSkladniki[j].asortyment) {
+                    // @ts-ignore
+                    asortyment = item.listAsortymentyDaniaSkladniki[j].asortyment;
+
+                    // @ts-ignore
+                    skladnik = item.listAsortymentyDaniaSkladniki[j].skladnik;
+                    // @ts-ignore
+                    ilosc = item.listAsortymentyDaniaSkladniki[j].ilosc;
+                    // @ts-ignore
+                    jmKod = item.listAsortymentyDaniaSkladniki[j].jmKod;
+
+                    // @ts-ignore
+                    if (ilosc === 0) {
+                        ilosc = '';
+                        jmKod = '';
+                    }
+
+                    // @ts-ignore
+                    if (item.listAsortymentyDaniaSkladniki[j].alergeny != " ") {
+                        // @ts-ignore
+                        alergeny = item.listAsortymentyDaniaSkladniki[j].alergeny;
+                        sklad += "<b>" + skladnik + "</b> " + ilosc + " " + jmKod + " " + alergeny + ", ";
+                    } else {
+                        sklad += skladnik + " " + ilosc + " " + jmKod + ", ";
+                    }
+                } else {
+                    // @ts-ignore
+                    skladnik = item.listAsortymentyDaniaSkladniki[j].skladnik;
+                    // @ts-ignore
+                    ilosc = item.listAsortymentyDaniaSkladniki[j].ilosc;
+                    // @ts-ignore
+                    jmKod = item.listAsortymentyDaniaSkladniki[j].jmKod;
+
+                    // @ts-ignore
+                    if (ilosc === 0) {
+                        ilosc = '';
+                        jmKod = '';
+                    }
+
+                    // @ts-ignore
+                    if (item.listAsortymentyDaniaSkladniki[j].alergeny != " ") {
+                        // @ts-ignore
+                        alergeny = item.listAsortymentyDaniaSkladniki[j].alergeny;
+                        sklad += "<b>" + skladnik + "</b> " + ilosc + " " + jmKod + " " + alergeny + ", ";
+                    } else {
+                        sklad += skladnik + " " + ilosc + " " + jmKod + ", ";
+                    }
+                }
+            }
+
+
+
             // @ts-ignore
-            cellRow.push( "TODO")
+            cellRow.push( repGlobal.convertPLtoUStxt(sklad) )
             // @ts-ignore
             cellValues.push(cellRow)
         });
 
-        console.log(cellValues)
 
 
-        autoTable(doc, { html: '#jadlospisTable' })
+        autoTable(doc, { html: '#jadlospisTable', columnStyles: {
+                0: {cellWidth: 20},
+                1: {cellWidth: 80},
+                2: {cellWidth: 200},
+                3: {cellWidth: 80},
+                4: {cellWidth: 80},
+                5: {cellWidth: 300},
+                // etc
+            } })
 
         autoTable(doc, {
             head: [cellName],
             body: cellValues,
         })
+
+        var pageCount = doc.getNumberOfPages(); //Total Page Number
+        for( let i = 0; i < pageCount; i++) {
+            doc.setPage(i);
+            let pageCurrent = doc.getCurrentPageInfo().pageNumber; //Current Page
+            doc.setFontSize(8);
+            doc.text('strona: ' + pageCurrent + '/' + pageCount, 145, doc.internal.pageSize.height - 10);
+        }
+
+
         doc.save('table.pdf')
     }
 }
