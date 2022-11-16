@@ -9,7 +9,7 @@ import autoTable, { RowInput } from 'jspdf-autotable';
 import JadlospisSkladnikiViewVO
     from "Frontend/generated/pl/kskowronski/data/entity/mapi/reports/JadlospisSkladnikiViewVO";
 import {Notification} from "@vaadin/notification";
-import AsortymentyDaniaDTO from "Frontend/generated/pl/kskowronski/data/entity/mapi/reports/AsortymentyDaniaDTO";
+import AlergenyDTO from "Frontend/generated/pl/kskowronski/data/entity/mapi/reports/AlergenyDTO";
 
 
 class RepJadlospisproStore {
@@ -17,7 +17,7 @@ class RepJadlospisproStore {
     public dialogRepJadlospisPro: boolean = false;
 
     private listJadlospis: JadlospisSkladnikiViewVO[] = [];
-
+    private listAlergeny: AlergenyDTO[] = [];
 
     constructor() {
         makeAutoObservable(this);
@@ -298,7 +298,24 @@ class RepJadlospisproStore {
 
         }
 
+        this.alergeny();
+    }
 
+    async alergeny() {
+
+        const listAlergeny = await JadlospisEndpoint.getAlergeny();
+        this.listAlergeny = listAlergeny;
+
+        var alergeny = '';
+
+        for(var i in listAlergeny){
+            alergeny += "<br>" + listAlergeny[i].alergenKod + ": " + "<b>" + listAlergeny[i].symbol + "</b>" + "\n";
+        }
+
+        var listaAlergeny = "<p><small><b>Alergeny:</b>" + alergeny + "</p>";
+
+        var descAlergen: HTMLElement = <HTMLElement>document.getElementById("descAlergen");
+        descAlergen.innerHTML = listaAlergeny;
     }
 
     //@ts-ignore

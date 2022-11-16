@@ -236,4 +236,30 @@ public class MapiService {
         return data;
     }
 
+    public List<AlergenyDTO> getAlergeny() throws Exception
+    {
+        List<Object[]> listAlergeny= null;
+        List<AlergenyDTO> listAlergen = new ArrayList<AlergenyDTO>();
+
+        try {
+
+            Query query =  em.createNativeQuery("select * from V_S_ALERGENY");
+
+            listAlergeny =  query.getResultList();
+
+            for ( Object[] a : listAlergeny)
+            {
+                AlergenyDTO alergen = new AlergenyDTO();
+                alergen.setAlergenKod((String) a[2]);
+                alergen.setSymbol((String) a[7]);
+                listAlergen.add(alergen);
+            }
+
+            return listAlergen;
+        }
+        catch (Exception e){
+            throw new Exception("error getAsortymentyDaniaSklad" + e.getMessage());
+        }
+    }
+
 }

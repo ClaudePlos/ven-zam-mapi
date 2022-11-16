@@ -5,6 +5,7 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 import dev.hilla.Endpoint;
 import dev.hilla.Nonnull;
 import pl.kskowronski.data.entity.mapi.JadlospisViewVO;
+import pl.kskowronski.data.entity.mapi.reports.AlergenyDTO;
 import pl.kskowronski.data.entity.mapi.reports.ColumnNameWskaznikiOdzywcze;
 import pl.kskowronski.data.service.mapi.MapiService;
 

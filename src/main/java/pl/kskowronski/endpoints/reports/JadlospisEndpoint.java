@@ -59,5 +59,9 @@ public class JadlospisEndpoint {
         return jsL;
     }
 
+    public @Nonnull List<@Nonnull AlergenyDTO> getAlergeny() throws Exception {
+        List<AlergenyDTO> aList = mapiService.getAlergeny();
+        return aList;
+    }
 
 }
