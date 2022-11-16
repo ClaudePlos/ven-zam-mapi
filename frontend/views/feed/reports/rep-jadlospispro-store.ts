@@ -9,6 +9,7 @@ import autoTable, { RowInput } from 'jspdf-autotable';
 import JadlospisSkladnikiViewVO
     from "Frontend/generated/pl/kskowronski/data/entity/mapi/reports/JadlospisSkladnikiViewVO";
 import {Notification} from "@vaadin/notification";
+import AsortymentyDaniaDTO from "Frontend/generated/pl/kskowronski/data/entity/mapi/reports/AsortymentyDaniaDTO";
 
 
 class RepJadlospisproStore {
@@ -143,12 +144,22 @@ class RepJadlospisproStore {
 
                 // @ts-ignore
                 if (listJadlospis[i].listAsortymentyDania.length > 1) {
-                    var a = document.createElement('A');
-                    a.setAttribute("id", "Amore" + i);
-                    a.setAttribute("onclick", "more(this)");
-                    a.setAttribute("href", "#");
-                    a.appendChild(document.createTextNode("Pokaż skład"));
-                    td.appendChild(a);
+
+                    let btn:HTMLButtonElement=<HTMLButtonElement>document.createElement("button");
+                    btn.innerText = "Pokaż skład";
+                    btn.id = "Amore_" + i;
+                    btn.addEventListener('click', (e:Event) => this.more(listJadlospis[i].listAsortymentyDania, btn.id));
+                    td.appendChild(btn);
+
+                    // var a = document.createElement('A');
+                    // a.setAttribute("id", "Amore" + i);
+                    // //a.setAttribute("onclick", "more(this)");
+                    // a.setAttribute("href", "#");
+                    // a.appendChild(document.createTextNode("Pokaż skład"));
+                    //
+                    // // @ts-ignore
+                    // a.click(this.more);
+                    // td.appendChild(a);
                 }
                 tr.appendChild(td);
 
@@ -236,7 +247,7 @@ class RepJadlospisproStore {
 //                    var tableBody = document.createElement('TBODY');
 //                    table.appendChild(tableBody);
                     var tr1 = document.createElement('TR');
-                    tr1.setAttribute("id", "more" + i);
+                    tr1.setAttribute("id", "more_" + i);
                     tr1.setAttribute("style", "font-size: 12px; border-style:hidden; display: none");
 
                     var td1 = document.createElement('TD');
@@ -290,16 +301,14 @@ class RepJadlospisproStore {
 
     }
 
-    // @ts-ignore
-    async more(items){
+    //@ts-ignore
+    async more(items, buttonID){
 
-        var moreText = document.getElementById(items.id.substr(1));
-        var a = document.getElementById(items.id);
+        var moreText = document.getElementById(buttonID.substring(1));
+        var a = document.getElementById(buttonID);
 
-        // @ts-ignore
-        var zmienna = a.innerHTML;
-
-        if (zmienna === "Ukryj") {
+        //@ts-ignore
+        if (a.innerHTML === "Ukryj") {
             console.log("if");
             // @ts-ignore
             a.innerHTML = "Pokaż skład";
