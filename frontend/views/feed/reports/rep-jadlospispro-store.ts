@@ -30,7 +30,8 @@ class RepJadlospisproStore {
         if (this.dialogRepJadlospisPro === true) {
 
             if (feedViewStore.selectedItem?.idDieta === undefined) {
-                Notification.show("Brak wybranej diety !!!")
+                const notification = Notification.show("Brak wybranej diety !!!", {position: 'middle', duration: 1000});
+                notification.setAttribute('theme', 'error');
             }
 
             const listJadlospis = await JadlospisEndpoint.getInfAboutJadlospisForDiet(feedViewStore.selectedItem?.idDieta, feedViewStore.startDate);
@@ -291,20 +292,32 @@ class RepJadlospisproStore {
 
     async genPDF() {
         const readyToExport = this.listJadlospis;
-        const doc = new jsPDF()
-        const cellName = ['LP'];
-        const cellValues: RowInput = [];
-        let cellV = []
+        const doc = new jsPDF('l', 'mm', [297, 210])
+        const cellName = ['LP', 'Posilek Kod', 'Danie / Alergeny','Gramatura','jm Gramatura Dania','Skladniki'];
+        const cellRow: string[]  = [];
+        const cellValues: []  = [];
+
         this.listJadlospis.forEach( item => {
 
+            // @ts-ignore
+            cellRow.push( item.lp as string )
+            cellRow.push( item.posilekKod as string )
+            cellRow.push( item.nazwaSkladnik + " " + item.alergenyPozycjiJadlospisu as string )
+            cellRow.push( item.gramatura as string )
+            cellRow.push( item.jmGramaturaDania as string )
+            // @ts-ignore
+            cellRow.push( "TODO")
+            // @ts-ignore
+            cellValues.push(cellRow)
+
         });
-        cellValues.push('123')
+
 
         autoTable(doc, { html: '#jadlospisTable' })
 
         autoTable(doc, {
             head: [cellName],
-            body: [cellValues],
+            body: cellValues,
         })
         doc.save('table.pdf')
     }

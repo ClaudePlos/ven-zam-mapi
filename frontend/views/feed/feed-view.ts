@@ -6,6 +6,7 @@ import './components/claude-date';
 import './components/date-copy';
 import './reports/rep-jadlospis';
 import './reports/rep-jadlospispro';
+import './reports/rep-wartodzywcze2';
 import '@vaadin/number-field';
 import '@vaadin/integer-field';
 import '@vaadin/vaadin-lumo-styles/vaadin-iconset';
@@ -35,6 +36,7 @@ import { GridItemModel } from '@vaadin/grid';
 import { feedViewStore } from './feed-view-store';
 import { repJadlospisStore } from './reports/rep-jadlospis-store';
 import { repJadlospisproStore } from './reports/rep-jadlospispro-store';
+import { repWartodzywcze2Store } from './reports/rep-wartodzywcze2-store';
 
 import KierunekKosztowVO from "Frontend/generated/pl/kskowronski/data/entity/mapi/KierunekKosztowVO";
 // @ts-ignore
@@ -101,7 +103,7 @@ export class FeedView extends View {
             text: 'Raporty',
             children: [
                 { text: 'Księga receptur' },{ text: 'Księga receptur PRO' },
-                { component: 'hr' },{ text: 'By email' }, { text: 'Get link' },
+                { component: 'hr' },{ text: 'Wartość odżywcza' }, { text: 'TODO2' },
                 { component: 'hr' },{ text: 'Set permissions' },
             ],
         },
@@ -126,6 +128,7 @@ export class FeedView extends View {
             <div>
                 <rep-jadlospis></rep-jadlospis>
                 <rep-jadlospispro></rep-jadlospispro>
+                <rep-wartodzywcze2></rep-wartodzywcze2>
             <vaadin-horizontal-layout theme="spacing padding" style="align-items: baseline; padding-top: inherit;">
                 <claude-date></claude-date>
                 <vaadin-combo-box  label="Kierunek kosztów" theme="small"
@@ -547,6 +550,8 @@ export class FeedView extends View {
             repJadlospisStore.dialogRep01Change(true)
         } else if ( e.detail.value.text === 'Księga receptur PRO' ) {
             repJadlospisproStore.dialogRepJadlospisProChange(true)
+        } else if ( e.detail.value.text === 'Wartość odżywcza' ) {
+            repWartodzywcze2Store.dialogRepWartOdzywczaChange(true)
         }
 
     }

@@ -8,11 +8,11 @@ import type { DialogOpenedChangedEvent } from '@vaadin/dialog';
 import { dialogRenderer } from '@vaadin/dialog/lit.js';
 import { applyTheme } from 'Frontend/generated/theme';
 import { feedViewStore } from '../feed-view-store';
-import { repJadlospisproStore } from '../reports/rep-jadlospispro-store';
+import { repWartodzywcze2Store } from '../reports/rep-wartodzywcze2-store';
 import {MobxLitElement} from "@adobe/lit-mobx";
 
-@customElement('rep-jadlospispro')
-export class RepJadlospispro extends MobxLitElement {
+@customElement('rep-wartodzywcze2')
+export class RepWartodzywcze2 extends MobxLitElement {
 
     protected createRenderRoot() {
         const root = super.createRenderRoot();
@@ -27,8 +27,8 @@ export class RepJadlospispro extends MobxLitElement {
                     header-title="Raport"
                     resizable
                     draggable
-                    .opened="${repJadlospisproStore.dialogRepJadlospisPro}"
-                    @opened-changed="${(e: DialogOpenedChangedEvent) => (repJadlospisproStore.dialogRepJadlospisProChange(e.detail.value))}"
+                    .opened="${repWartodzywcze2Store.dialogRepWartodzywcze2}"
+                    @opened-changed="${(e: DialogOpenedChangedEvent) => (repWartodzywcze2Store.dialogRepWartOdzywczaChange(e.detail.value))}"
                     }
                     ${dialogRenderer(this.renderDialog, [])}
             >
@@ -36,12 +36,11 @@ export class RepJadlospispro extends MobxLitElement {
     `;
     }
 
-
     private renderDialog = () => html`
-    <vaadin-vertical-layout style="align-items: stretch; width: 18rem; max-width: 100%; width: 1600px; height: 800px;">
+    <vaadin-vertical-layout style="align-items: stretch; width: 18rem; max-width: 100%; width: 1800px; height: 400px;">
         <span>Dieta: ${feedViewStore.selectedItem?.dietaNazwa} Na dzień: ${feedViewStore.startDate}</span>
-        <vaadin-button theme="secondary error icon small"  style="width: 100px" @click="${() => (repJadlospisproStore.genPDF())}">pdf</vaadin-button>
-        <div class="jadlospisTable"><table id="jadlospisTable"></table></div>
+        <vaadin-button theme="secondary error icon small" style="width: 100px" @click="${() => (repWartodzywcze2Store.genPDF())}">pdf</vaadin-button>
+        <div class="wartodzywcze2Table"><table id="wartodzywcze2Table" style="border: 1px solid black; border-collapse: collapse;"></table></div>
         
     </vaadin-vertical-layout>
   `;

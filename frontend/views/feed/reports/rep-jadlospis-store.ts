@@ -6,6 +6,7 @@ import ColumnNameWskaznikiOdzywcze
     from "Frontend/generated/pl/kskowronski/data/entity/mapi/reports/ColumnNameWskaznikiOdzywcze";
 import JadlospisDlaDietyNaDzienDTO
     from "Frontend/generated/pl/kskowronski/data/entity/mapi/reports/JadlospisDlaDietyNaDzienDTO";
+import {Notification} from "@vaadin/notification";
 
 
 class RepJadlospisStore {
@@ -23,6 +24,11 @@ class RepJadlospisStore {
         this.dialogRep01 = value;
 
         if (this.dialogRep01 === true) {
+
+            if (feedViewStore.selectedItem?.idDieta === undefined) {
+                const notification = Notification.show("Brak wybranej diety !!!", {position: 'middle', duration: 1000});
+                notification.setAttribute('theme', 'error');
+            }
 
             const listJadlospis = await JadlospisEndpoint.getJadlospisDlaDietyNaDzien(feedViewStore.selectedItem?.dietaNazwa, feedViewStore.startDate)
             this.listJadlospis = listJadlospis;

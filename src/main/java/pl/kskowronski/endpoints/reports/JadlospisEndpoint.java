@@ -60,15 +60,4 @@ public class JadlospisEndpoint {
     }
 
 
-
-    public @Nonnull List<@Nonnull ColumnNameWskaznikiOdzywcze> getJadlospisColumnNames() throws Exception {
-        List<ColumnNameWskaznikiOdzywcze> lList = mapiService.getJadlospisColumnNames();
-        return lList;
-    }
-
-    public @Nonnull List<@Nonnull JadlospisViewVO> getJadlospis(BigDecimal idDietaBD, String dObr) throws Exception {
-        List<JadlospisViewVO> lList = mapiService.getJadlospis(idDietaBD, dObr);
-        return lList;
-    }
-
 }
