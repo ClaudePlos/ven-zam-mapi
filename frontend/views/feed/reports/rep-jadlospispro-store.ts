@@ -464,7 +464,7 @@ class RepJadlospisproStore {
         }
 
 
-        doc.save('table.pdf')
+        doc.save('ksiega_receptur.pdf')
     }
 }
 
