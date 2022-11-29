@@ -30,7 +30,7 @@ export class LoginView extends View {
         action="login"
         no-forgot-password
         .i18n=${Object.assign(
-          { header: { title: 'ven-zam-mapi', description: 'Login using user/user or admin/admin > AdminMAPI/admin' } },
+          { header: { title: 'ven-zam-mapi', description: 'Rekeep Polska' } },
           loginI18nDefault
         )}
       >

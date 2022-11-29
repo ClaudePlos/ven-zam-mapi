@@ -58,9 +58,12 @@ Developing - TEST:
 sudo docker build -t ven-zam-mapi .
 sudo docker run --name zam-mapi -d -p 8088:8080 ven-zam-mapi:latest
 
-
+Login using user/user or admin/admin > AdminMAPI/admin
 production IP and port:
 https://192.168.0.144:8182/ > nzam.rekeep.pl
+
+sudo docker build -t ven-zam-mapi .
+sudo docker run --name zam-mapi-prod -d -p 8182:8182 ven-zam-mapi:latest
 
 TODO:
 2. jak wpiszą w śniadanie jesden to kopiowanie na O i K
