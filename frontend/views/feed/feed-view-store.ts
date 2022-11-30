@@ -302,6 +302,14 @@ class FeedViewStore {
             }
         })
 
+        var pageCount = doc.getNumberOfPages(); //Total Page Number
+        for( let i = 0; i < pageCount; i++) {
+            doc.setPage(i);
+            let pageCurrent = doc.getCurrentPageInfo().pageNumber; //Current Page
+            doc.setFontSize(8);
+            doc.text('strona: ' + pageCurrent + '/' + pageCount, 185, doc.internal.pageSize.height - 10);
+        }
+
         var font = doc.getFont();
         doc.save('comments.pdf')
     }
