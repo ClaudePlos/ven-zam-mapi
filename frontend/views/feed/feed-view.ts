@@ -419,7 +419,7 @@ export class FeedView extends View {
               <p><b>Kierunek kosztów:</b> ${this.kkName}</p>
               <p><b>Oddział:</b> ${this.gzName}</p>
           </div>
-          <vaadin-grid .items="${feedViewStore.stanyZywionychNaDzien}" style="width: 2000px; height: 700px">
+          <vaadin-grid .items="${feedViewStore.stanyZywionychNaDzienWitchComments}" style="width: 2000px; height: 700px">
               <vaadin-grid-column path="dietaNazwa" header="Dieta" width="300px" text-align="start"></vaadin-grid-column>
               <vaadin-grid-column path="szUwagi" header="Uwagi" width="1450px" text-align="start"></vaadin-grid-column>
           </vaadin-grid>
@@ -431,6 +431,10 @@ export class FeedView extends View {
       </vaadin-horizontal-layout>          
     `;
     };
+
+    async updateArrayWithComments(){
+
+    }
 
     async updateState( item: StanZywionychNaDzienDTO, value: number, comment : String, type: string){
         if (type === "s") {

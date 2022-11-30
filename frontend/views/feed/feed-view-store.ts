@@ -17,6 +17,7 @@ class FeedViewStore {
     public sortType: string = "lp";
 
     public stanyZywionychNaDzien: StanZywionychNaDzienDTO[] = [];
+    public stanyZywionychNaDzienWitchComments: StanZywionychNaDzienDTO[] = [];
     private stanyZywionychForCopy: StanZywionychNaDzienDTO[] = [];
 
     public blockHours: NapZamBlockadeVO[] = [];
@@ -68,6 +69,13 @@ class FeedViewStore {
         if (this.stanyZywionychNaDzien.length != 0){
             Notification.show("+")
         }
+
+        this.stanyZywionychNaDzienWitchComments = [];
+        this.stanyZywionychNaDzien.forEach( (i) => {
+            if (i.szUwagi !== undefined) {
+                this.stanyZywionychNaDzienWitchComments.push(i);
+            }
+        });
     }
 
     async checkBlockadeHours() {
@@ -263,13 +271,13 @@ class FeedViewStore {
 
         doc.text("Kierunek kosztów: " + kkName + "", 10, 10)
         doc.text("Odział: " + gzName + "", 100, 10)
-        doc.text("Data wydruku: " + now.toLocaleString() + "", 310, 10)
+        doc.text("Data wydruku: " + now.toLocaleString() + "", 330, 10)
         doc.setLanguage('pl')
 
         const cellName: string[] = ['Dieta', 'Uwagi'];
         const cellValues: []  = [];
 
-        feedViewStore.stanyZywionychNaDzien.forEach( item => {
+        feedViewStore.stanyZywionychNaDzienWitchComments.forEach( item => {
             const cellRow: string[]  = [];
             cellRow.push( item.dietaNazwa as string )
             cellRow.push( item.szUwagi as string )
