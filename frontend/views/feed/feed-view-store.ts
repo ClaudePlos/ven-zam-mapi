@@ -5,6 +5,9 @@ import StanZywionychNaDzienDTO from "Frontend/generated/pl/kskowronski/data/enti
 import {Notification} from "@vaadin/notification";
 import dateFnsParse from "date-fns/parse";
 import NapZamBlockadeVO from "Frontend/generated/pl/kskowronski/data/entity/mapi/nap/NapZamBlockadeVO";
+import jsPDF from "jspdf";
+import {repGlobal} from "Frontend/views/feed/reports/rep-global";
+import autoTable from "jspdf-autotable";
 
 class FeedViewStore {
 
@@ -243,6 +246,56 @@ class FeedViewStore {
             })
         })
 
+    }
+
+    genPdfForComments(kkName: string | undefined, gzName: string | undefined) {
+
+        const doc = new jsPDF('l', 'mm', [397, 210])
+
+        doc.addFileToVFS("Arial.ttf", repGlobal.arialFont);
+        doc.addFont("Arial.ttf", "Arial", "normal");
+        doc.setFont("Arial");
+        doc.setFontSize(9);
+
+        var font = doc.getFont();
+
+        const now = new Date();
+
+        doc.text("Kierunek kosztów: " + kkName + "", 10, 10)
+        doc.text("Odział: " + gzName + "", 100, 10)
+        doc.text("Data wydruku: " + now.toLocaleString() + "", 310, 10)
+        doc.setLanguage('pl')
+
+        const cellName: string[] = ['Dieta', 'Uwagi'];
+        const cellValues: []  = [];
+
+        feedViewStore.stanyZywionychNaDzien.forEach( item => {
+            const cellRow: string[]  = [];
+            cellRow.push( item.dietaNazwa as string )
+            cellRow.push( item.szUwagi as string )
+
+            // @ts-ignore
+            cellValues.push(cellRow)
+        });
+
+        console.log(cellValues)
+
+
+        autoTable(doc, {
+            head: [cellName],
+            body: cellValues,
+            styles: {
+                font: 'Arial',    // <-- place name of your font here
+                fontStyle: 'normal',
+            },
+            columnStyles: {
+                0: {cellWidth: 100},
+                // etc
+            }
+        })
+
+        var font = doc.getFont();
+        doc.save('comments.pdf')
     }
 
 

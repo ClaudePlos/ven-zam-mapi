@@ -64,6 +64,12 @@ export class FeedView extends View {
     idKK: number = 0;
 
     @state()
+    public kkName: string | undefined;
+
+    @state()
+    public gzName: string | undefined;
+
+    @state()
     czyKorekta: boolean = false;
 
     @state()
@@ -296,6 +302,7 @@ export class FeedView extends View {
     async gzChanged(e: CustomEvent) {
         this.sumS = 0;
         feedViewStore.idGZ = e.detail.value as number;
+        this.gzName = this.gzList.find((i) => { return i.idGrupaZywionych === e.detail.value })?.grupaZywionych;
         await feedViewStore.getStanyZywionychNaDzien();
         await this.calcTotal()
     }
@@ -407,14 +414,21 @@ export class FeedView extends View {
     rendererComments: NotificationLitRenderer = () => {
         return html`
       <vaadin-horizontal-layout theme="spacing" >
-          <vaadin-grid .items="${feedViewStore.stanyZywionychNaDzien}" style="width: 1800px; height: 400px">
+      <vaadin-vertical-layout theme="spacing" >
+          <div class="content">
+              <p><b>Kierunek kosztów:</b> ${this.kkName}</p>
+              <p><b>Oddział:</b> ${this.gzName}</p>
+          </div>
+          <vaadin-grid .items="${feedViewStore.stanyZywionychNaDzien}" style="width: 2000px; height: 700px">
               <vaadin-grid-column path="dietaNazwa" header="Dieta" width="300px" text-align="start"></vaadin-grid-column>
               <vaadin-grid-column path="szUwagi" header="Uwagi" width="1450px" text-align="start"></vaadin-grid-column>
           </vaadin-grid>
-        <vaadin-button theme="tertiary-inline" @click="${this.close}" aria-label="Close">
-          <vaadin-icon icon="lumo:cross"></vaadin-icon>
-        </vaadin-button>
-      </vaadin-horizontal-layout>
+          <vaadin-button theme="secondary error icon small"  style="width: 100px" @click="${() => (feedViewStore.genPdfForComments(this.kkName, this.gzName))}">pdf</vaadin-button>
+      </vaadin-vertical-layout>
+          <vaadin-button theme="tertiary-inline" @click="${this.close}" aria-label="Close">
+              <vaadin-icon icon="lumo:cross"></vaadin-icon>
+          </vaadin-button>
+      </vaadin-horizontal-layout>          
     `;
     };
 
@@ -505,6 +519,7 @@ export class FeedView extends View {
 
     async kkChanged(e: CustomEvent) {
         this.idKK = e.detail.value as number;
+        this.kkName = this.kkList.find((i) => { return i.idKierunekKosztow === this.idKK})?.kierunekKosztowNazwa;
         this.getGzList();
         const blockHours = await NapZamBlockadeEndpoint.getBlockadesForKK(this.idKK)
         feedViewStore.blockHours = blockHours;
