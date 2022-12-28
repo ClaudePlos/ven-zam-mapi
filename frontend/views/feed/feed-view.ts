@@ -7,6 +7,7 @@ import './components/date-copy';
 import './reports/rep-jadlospis';
 import './reports/rep-jadlospispro';
 import './reports/rep-wartodzywcze2';
+import './additionalMaterials/additional-materials'
 import '@vaadin/number-field';
 import '@vaadin/integer-field';
 import '@vaadin/vaadin-lumo-styles/vaadin-iconset';
@@ -137,6 +138,7 @@ export class FeedView extends View {
                 <rep-jadlospis></rep-jadlospis>
                 <rep-jadlospispro></rep-jadlospispro>
                 <rep-wartodzywcze2></rep-wartodzywcze2>
+                <additional-materials></additional-materials>
             <vaadin-horizontal-layout theme="spacing padding" style="align-items: baseline; padding-top: inherit;">
                 <claude-date></claude-date>
                 <vaadin-combo-box  label="Kierunek kosztów" theme="small"
@@ -159,7 +161,7 @@ export class FeedView extends View {
                 ></vaadin-combo-box>
                 <vaadin-button theme="primary" @click=${this.save}>Zapisz</vaadin-button>
                 <vaadin-button theme="secondary error icon small" @click="${() => (this.notCommentsOpened = true)}" .disabled="${this.notCommentsOpened}">u</vaadin-button>
-                <vaadin-button theme="secondary error icon small" @click="${() => (additionalMaterialsStore.dialogAdditionalMaterialsOpened = true)}"><vaadin-icon icon="lumo:edit"></vaadin-icon></vaadin-button>
+                <vaadin-button theme="secondary error icon small" @click="${() => (additionalMaterialsStore.dialogAdditionalMaterialsChange(true))}"><vaadin-icon icon="lumo:edit"></vaadin-icon></vaadin-button>
                 
                 
                 <vaadin-notification
