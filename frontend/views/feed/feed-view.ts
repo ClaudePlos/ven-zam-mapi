@@ -20,6 +20,7 @@ import '@vaadin/button';
 import '@vaadin/menu-bar';
 import '@vaadin/split-layout';
 
+
 import type { GridActiveItemChangedEvent } from '@vaadin/grid';
 import { html, render } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
@@ -37,6 +38,7 @@ import { feedViewStore } from './feed-view-store';
 import { repJadlospisStore } from './reports/rep-jadlospis-store';
 import { repJadlospisproStore } from './reports/rep-jadlospispro-store';
 import { repWartodzywcze2Store } from './reports/rep-wartodzywcze2-store';
+import { additionalMaterialsStore } from './additionalMaterials/additional-materials-store';
 
 import KierunekKosztowVO from "Frontend/generated/pl/kskowronski/data/entity/mapi/KierunekKosztowVO";
 // @ts-ignore
@@ -157,6 +159,9 @@ export class FeedView extends View {
                 ></vaadin-combo-box>
                 <vaadin-button theme="primary" @click=${this.save}>Zapisz</vaadin-button>
                 <vaadin-button theme="secondary error icon small" @click="${() => (this.notCommentsOpened = true)}" .disabled="${this.notCommentsOpened}">u</vaadin-button>
+                <vaadin-button theme="secondary error icon small" @click="${() => (additionalMaterialsStore.dialogAdditionalMaterialsOpened = true)}"><vaadin-icon icon="lumo:edit"></vaadin-icon></vaadin-button>
+                
+                
                 <vaadin-notification
                         duration="0"
                         position="top-stretch"
